@@ -1,0 +1,48 @@
+{
+    "name": "zetaLend-ai",
+    "version": "1.0.0",
+    "description": "AI-Powered Cross-Chain Lending Platform targeting all 4 ZetaChain hackathon prizes",
+    "main": "index.js",
+    "scripts": {
+        "setup": "./scripts/complete-setup.sh",
+        "demo": "node scripts/complete-demo.js",
+        "start:all": "concurrently \"npm run start:localnet\" \"npm run start:backend\" \"npm run start:frontend\"",
+        "start:frontend": "cd frontend && npm start",
+        "start:backend": "cd backend && npm run dev",
+        "start:localnet": "npx zetachain@latest localnet start",
+        "deploy:contracts": "cd contracts && npx hardhat run deployment/deploy.js",
+        "deploy:testnet": "cd contracts && npx hardhat run deployment/deploy.js --network testnet",
+        "build": "cd frontend && npm run build",
+        "test": "cd contracts && npx hardhat test",
+        "stop": "pkill -f 'localnet\\|backend\\|frontend' || true",
+        "clean": "rm -rf node_modules frontend/node_modules backend/node_modules contracts/node_modules",
+        "install:all": "npm install && cd contracts && npm install && cd ../backend && npm install && cd ../frontend && npm install",
+        "logs": "tail -f localnet.log backend.log frontend.log",
+        "status": "ps aux | grep -E 'localnet|backend|frontend'"
+    },
+    "keywords": [
+        "zetachain",
+        "cross-chain",
+        "lending",
+        "defi",
+        "ai",
+        "blockchain",
+        "universal-contracts",
+        "gateway-api",
+        "google-gemini",
+        "hackathon"
+    ],
+    "author": "Your Name",
+    "license": "MIT",
+    "devDependencies": {
+        "concurrently": "^8.2.2",
+        "nodemon": "^3.0.1"
+    },
+    "dependencies": {
+        "@zetachain/toolkit": "^12.0.0"
+    },
+    "engines": {
+        "node": ">=18.0.0",
+        "npm": ">=8.0.0"
+    }
+}

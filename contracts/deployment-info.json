@@ -1,0 +1,14 @@
+{
+  "zetaLendAI": "0x8cdcc4e2ca3d32d4bc134b6cce408add8d7a19ef",
+  "gateway": "0xfEDD7A6e3Ef1cC470fbfbF955a22D793dDC0F44E",
+  "deployer": "0x5029030704a923caaaf97bf1f308e2a081caad95",
+  "txHash": "0x69430542db07551e03ef87577dea953579852ec7e4cdfc3861b2b38cf6a351a6",
+  "network": "zetachain_testnet",
+  "chainId": 7001,
+  "blockNumber": 12198191,
+  "gasUsed": 2500000,
+  "transactionFee": "0.075",
+  "timestamp": "2025-08-19T20:10:29Z",
+  "status": "deployed_successfully",
+  "explorer": "https://athens.explorer.zetachain.com/address/0x8cdcc4e2ca3d32d4bc134b6cce408add8d7a19ef"
+}
