@@ -7,7 +7,7 @@
 [![AI](https://img.shields.io/badge/AI-Gemini%20Powered-purple)](https://ai.google.dev)
 
 
-**Total Potential: $6,000 stZETA + 4x Google Cloud Credits**
+
 
 ## 🚀 Quick Start
 
