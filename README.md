@@ -1,6 +1,6 @@
 # 🏆 ZetaLend AI - AI-Powered Cross-Chain Lending Platform
 
-**Targeting ALL 4 ZetaChain x Google Buildathon Prizes ($6,000 stZETA total)**
+
 
 [![Demo](https://img.shields.io/badge/Demo-Live-green)](http://localhost:3000)
 [![Contracts](https://img.shields.io/badge/Contracts-Deployed-blue)](https://explorer.zetachain.com)
