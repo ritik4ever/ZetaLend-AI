@@ -18,7 +18,7 @@ app.use('/api/lending', lendingRoutes);
 app.use('/api/ai', aiRoutes);
 
 // Health check
-app.get('/health', (req, res) => {
+app.get(['/health', '/api/health'], (req, res) => {
     res.json({ status: 'ZetaLend AI Backend Running', timestamp: new Date().toISOString() });
 });
 

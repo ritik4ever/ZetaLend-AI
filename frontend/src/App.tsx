@@ -55,6 +55,14 @@ const App: React.FC = () => {
     }, []);
 
     useEffect(() => {
+        fetch("http://localhost:3001/api/health")
+            .then(res => res.json())
+            .then(data => console.log("Backend says:", data))
+            .catch(err => console.error("❌ Backend not reachable:", err));
+    }, []);
+
+
+    useEffect(() => {
         if (walletState.isConnected) {
             loadUserPositions();
             loadTransactions();
