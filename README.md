@@ -6,14 +6,6 @@
 [![Contracts](https://img.shields.io/badge/Contracts-Deployed-blue)](https://explorer.zetachain.com)
 [![AI](https://img.shields.io/badge/AI-Gemini%20Powered-purple)](https://ai.google.dev)
 
-## 🎯 Prize Categories
-
-| Prize | Category | Amount | Status |
-|-------|----------|---------|---------|
-| 🎯 | Cross-Chain Lending Track | $3,000 stZETA | ✅ Implemented |
-| 🔗 | Best Use of Universal Contract | $1,000 stZETA | ✅ Implemented |
-| ⚡ | Most Innovative Gateway API Use | $1,000 stZETA | ✅ Implemented |
-| 🤖 | Best AI Feature | $1,000 stZETA | ✅ Implemented |
 
 **Total Potential: $6,000 stZETA + 4x Google Cloud Credits**
 
