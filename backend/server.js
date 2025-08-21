@@ -1,23 +1,27 @@
 const express = require('express');
 const cors = require('cors');
 const app = express();
-const PORT = 3001;
 
-app.use(cors());
+const PORT = process.env.PORT || 3001;
+
+// Middleware
+app.use(cors({
+    origin: process.env.FRONTEND_URL || "*"
+}));
 app.use(express.json());
 
 // Contract configuration
 const CONTRACT_CONFIG = {
-  zetaLendAI: "0x8cdcc4e2ca3d32d4bc134b6cce408add8d7a19ef",
-  gateway: "0xfEDD7A6e3Ef1cC470fbfbF955a22D793dDC0F44E",
-  network: "zetachain_testnet",
-  chainId: 7001,
-  explorer: "https://athens.explorer.zetachain.com"
+    zetaLendAI: "0x8cdcc4e2ca3d32d4bc134b6cce408add8d7a19ef",
+    gateway: "0xfEDD7A6e3Ef1cC470fbfbF955a22D793dDC0F44E",
+    network: "zetachain_testnet",
+    chainId: 7001,
+    explorer: "https://athens.explorer.zetachain.com"
 };
 
 // Health check
 app.get('/health', (req, res) => {
-    res.json({ 
+    res.json({
         status: '🚀 ZetaLend AI Backend Running',
         contract: CONTRACT_CONFIG.zetaLendAI,
         network: CONTRACT_CONFIG.network,
@@ -28,20 +32,16 @@ app.get('/health', (req, res) => {
 
 // Get contract configuration
 app.get('/api/contract', (req, res) => {
-    res.json({
-        success: true,
-        data: CONTRACT_CONFIG
-    });
+    res.json({ success: true, data: CONTRACT_CONFIG });
 });
 
 // Mock AI risk assessment
 app.post('/api/ai/assess-risk', (req, res) => {
     const { positionData } = req.body;
-    
-    // Simulate AI processing
+
     setTimeout(() => {
         const ltv = positionData?.borrowed / positionData?.collateral * 100 || 65;
-        
+
         const mockRisk = {
             riskScore: Math.min(Math.floor(ltv * 1.2), 100),
             liquidationProbability: Math.max(Math.floor((ltv - 60) * 2), 10),
@@ -60,11 +60,8 @@ app.post('/api/ai/assess-risk', (req, res) => {
             aiConfidence: Math.floor(Math.random() * 20) + 80,
             timestamp: new Date().toISOString()
         };
-        
-        res.json({
-            success: true,
-            data: mockRisk
-        });
+
+        res.json({ success: true, data: mockRisk });
     }, 1000);
 });
 
@@ -89,7 +86,7 @@ app.post('/api/ai/optimize-yield', (req, res) => {
 // Mock liquidation prediction
 app.get('/api/ai/liquidation-risk/:positionId', (req, res) => {
     const { positionId } = req.params;
-    
+
     res.json({
         success: true,
         data: {
