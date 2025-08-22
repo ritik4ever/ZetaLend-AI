@@ -14,7 +14,7 @@ class YieldOptimizerService {
         this.startRealTimeMonitoring();
     }
 
-    // 🤖 AI FEATURE: Real-time yield optimization across chains
+    // AI FEATURE: Real-time yield optimization across chains
     async optimizeYieldAcrossChains(portfolioData) {
         const cacheKey = this._generateCacheKey(portfolioData);
 
@@ -58,7 +58,7 @@ class YieldOptimizerService {
         }
     }
 
-    // 🤖 AI FEATURE: Multi-chain rebalancing recommendations
+    // AI FEATURE: Multi-chain rebalancing recommendations
     async generateRebalancingStrategy(currentPositions, targetRiskLevel) {
         try {
             const prompt = `
@@ -116,7 +116,7 @@ class YieldOptimizerService {
         }
     }
 
-    // 🤖 AI FEATURE: Real-time yield prediction
+    // AI FEATURE: Real-time yield prediction
     async predictYieldTrends(timeHorizon = '7d') {
         try {
             const historicalData = await this._getHistoricalYieldData(timeHorizon);
@@ -451,5 +451,6 @@ class YieldOptimizerService {
         return `yield_opt_${JSON.stringify(portfolioData).slice(0, 50)}_${Math.floor(Date.now() / 60000)}`;
     }
 }
+
 
 module.exports = YieldOptimizerService;
