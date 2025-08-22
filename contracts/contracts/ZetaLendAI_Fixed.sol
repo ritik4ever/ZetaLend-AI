@@ -104,7 +104,7 @@ contract ZetaLendAI {
         chainTokens[56] = 0x13A0c5930C028511Dc02665E7285134B6d11A5f4;
     }
     
-    // ✅ ULTRA-SIMPLIFIED: Main lending function with minimal variables
+    //  Main lending function with minimal variables
     function lendCrossChain(
         uint256 collateralAmount,
         uint256 borrowAmount,
@@ -116,11 +116,11 @@ contract ZetaLendAI {
         require(borrowAmount > 0, "Invalid borrow amount");
         require(msg.value >= collateralAmount, "Insufficient ZETA sent");
         
-        // ✅ SIMPLIFIED: Decode AI data in-place
+        //  Decode AI data in-place
         (uint256 riskScore,,,) = abi.decode(aiRiskDataEncoded, (uint256, uint256, uint256, uint256));
         require(riskScore <= 85, "AI: Risk too high");
         
-        // ✅ SIMPLIFIED: Create position directly
+        //  Create position directly
         uint256 positionId = nextPositionId++;
         
         lendingPositions[positionId].user = msg.sender;
@@ -136,7 +136,7 @@ contract ZetaLendAI {
         lendingPositions[positionId].aiRiskScore = riskScore;
         lendingPositions[positionId].yieldRate = 500;
         
-        // ✅ SIMPLIFIED: Store minimal AI data
+        //  Store minimal AI data
         aiRiskData[positionId].riskScore = riskScore;
         aiRiskData[positionId].timestamp = block.timestamp;
         aiRiskData[positionId].healthFactor = (collateralAmount * 100) / borrowAmount;
@@ -152,13 +152,13 @@ contract ZetaLendAI {
             borrowAmount
         );
         
-        // ✅ SIMPLIFIED: Cross-chain execution
+        //  Cross-chain execution
         if (borrowChain != block.chainid) {
             _sendCrossChainMessage(positionId, borrowChain, borrowAmount);
         }
     }
     
-    // ✅ SIMPLIFIED: Minimal cross-chain function
+    //  Minimal cross-chain function
     function _sendCrossChainMessage(
         uint256 positionId,
         uint256 targetChain,
@@ -259,4 +259,5 @@ contract ZetaLendAI {
     function emergencyWithdraw() external onlyAdmin {
         payable(admin).transfer(address(this).balance);
     }
+
 }
