@@ -1,13 +1,13 @@
 export const CONTRACT_ADDRESSES = {
-    ZETA_LEND_AI: '0x828075b2352b45233a3f58a1230cf473166bb9e1', // Your real ZetaLend contract
+    ZETA_LEND_AI: '0x353e2e29af2864e83f7c7001cb3bf7a6e9105021', // Your real ZetaLend contract
     ZETA_GATEWAY: process.env.REACT_APP_ZETA_GATEWAY_CONTRACT || '0xfEDD7A6e3Ef1cC470fbfbF955a22D793dDC0F44E',
     CROSS_CHAIN_CONNECTOR: '0xe7f1725e7734ce288f8367e1bb143e90bb3f0512',
     GATEWAY_ZEVM: '0xfEDD7A6e3Ef1cC470fbfbF955a22D793dDC0F44E',
 
     RECEIVERS: {
-        1: process.env.REACT_APP_ETH_RECEIVER_CONTRACT,      // Ethereum
-        137: process.env.REACT_APP_POLYGON_RECEIVER_CONTRACT, // Polygon
-        56: process.env.REACT_APP_BSC_RECEIVER_CONTRACT       // BSC
+        1: process.env.REACT_APP_ETH_RECEIVER_CONTRACT   || '0xa33ea38ca38b1dc5234d97dccb3e6898c2d3b242',   // Ethereum
+        137: process.env.REACT_APP_POLYGON_RECEIVER_CONTRACT || '0x6ee043f5039c1d3bac1b4d08f2351b265d209ad2',  // Polygon
+        56: process.env.REACT_APP_BSC_RECEIVER_CONTRACT  || '0xd66fa7b4472a1eaa08ba217ef67a687c63655969'   // BSC
     }
 
 };
