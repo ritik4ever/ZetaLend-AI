@@ -45,7 +45,7 @@ const AIRiskAssessment: React.FC<AIRiskAssessmentProps> = ({
 
             const response = await aiService.assessRisk(mockPositionData);
 
-            // Fix: Access response properties directly, not response.data
+            //  Access response properties directly, not response.data
             const metrics: RiskMetrics = {
                 riskScore: response.riskScore,
                 liquidationProbability: response.liquidationProbability,
@@ -155,5 +155,6 @@ const AIRiskAssessment: React.FC<AIRiskAssessmentProps> = ({
         </div>
     );
 };
+
 
 export default AIRiskAssessment;
