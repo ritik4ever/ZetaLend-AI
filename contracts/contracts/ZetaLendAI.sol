@@ -35,7 +35,7 @@ struct MessageContext {
 contract ZetaLendAI {
     IGatewayZEVM public immutable gateway;
     
-    // 🎯 CROSS-CHAIN LENDING: Core data structures
+    //  CROSS-CHAIN LENDING: Core data structures
     struct LendingPosition {
         address user;
         uint256 collateralAmount;
@@ -51,7 +51,7 @@ contract ZetaLendAI {
         uint256 yieldRate;
     }
 
-    // 🤖 AI FEATURES: AI risk assessment data
+    //  AI FEATURES: AI risk assessment data
     struct AIRiskData {
         uint256 riskScore;
         uint256 recommendedLTV;
@@ -61,7 +61,7 @@ contract ZetaLendAI {
         uint256 optimizedYieldChain;
     }
 
-    // ⚡ GATEWAY API: Yield distribution tracking
+    //  GATEWAY API: Yield distribution tracking
     struct YieldDistribution {
         uint256 totalYield;
         uint256 lastDistributionTime;
@@ -74,12 +74,12 @@ contract ZetaLendAI {
     mapping(address => uint256[]) public userPositions;
     mapping(address => YieldDistribution) public yieldDistributions;
     
-    // 🎯 CROSS-CHAIN LENDING: Multi-chain liquidity tracking
+    //  CROSS-CHAIN LENDING: Multi-chain liquidity tracking
     mapping(address => mapping(uint256 => uint256)) public chainLiquidity;
     mapping(address => uint256) public totalLiquidity;
     mapping(uint256 => uint256) public chainUtilization;
     
-    // 🤖 AI FEATURES: AI optimization data
+    //  AI FEATURES: AI optimization data
     mapping(address => uint256) public aiOptimizedRates;
     mapping(uint256 => uint256) public aiLiquidationPredictions;
     
@@ -132,7 +132,7 @@ contract ZetaLendAI {
         aiModelVersion = 1;
     }
     
-    // ⚡ GATEWAY API: Advanced cross-chain liquidation (MOVED UP)
+    // GATEWAY API: Advanced cross-chain liquidation (MOVED UP)
     function liquidatePositionAdvanced(uint256 positionId) public {
         LendingPosition storage position = lendingPositions[positionId];
         require(position.isActive, "Position not active");
@@ -144,7 +144,7 @@ contract ZetaLendAI {
             "Position healthy"
         );
         
-        // ⚡ GATEWAY API: Multi-chain liquidation coordination
+        //  GATEWAY API: Multi-chain liquidation coordination
         uint256[] memory affectedChains = new uint256[](2);
         affectedChains[0] = position.collateralChain;
         affectedChains[1] = position.borrowChain;
@@ -174,7 +174,7 @@ contract ZetaLendAI {
         emit CrossChainLiquidation(positionId, msg.sender, position.borrowedAmount, affectedChains);
     }
     
-    // 🎯 CROSS-CHAIN LENDING: Create cross-chain lending position
+    //  CROSS-CHAIN LENDING: Create cross-chain lending position
     function lendCrossChain(
         uint256 collateralAmount,
         uint256 borrowAmount,
@@ -185,7 +185,7 @@ contract ZetaLendAI {
         require(collateralAmount > 0, "Invalid collateral");
         require(borrowAmount > 0, "Invalid borrow amount");
         
-        // 🤖 AI FEATURE: Decode and validate AI risk assessment
+        //  AI FEATURE: Decode and validate AI risk assessment
         (uint256 riskScore, uint256 recommendedLTV, uint256 liquidationProb, uint256 optimizedChain) = 
             abi.decode(aiRiskDataEncoded, (uint256, uint256, uint256, uint256));
         
@@ -195,7 +195,7 @@ contract ZetaLendAI {
         
         uint256 positionId = nextPositionId++;
         
-        // 🎯 CROSS-CHAIN LENDING: Create position
+        //  CROSS-CHAIN LENDING: Create position
         lendingPositions[positionId] = LendingPosition({
             user: msg.sender,
             collateralAmount: collateralAmount,
@@ -223,7 +223,7 @@ contract ZetaLendAI {
         
         userPositions[msg.sender].push(positionId);
         
-        // 🎯 CROSS-CHAIN LENDING: Update liquidity pools
+        //  CROSS-CHAIN LENDING: Update liquidity pools
         _updateLiquidityPools(borrowToken, borrowChain, borrowAmount, true);
         
         emit CrossChainLend(
@@ -239,7 +239,7 @@ contract ZetaLendAI {
         _executeCrossChainBorrow(positionId, borrowChain, borrowToken, borrowAmount);
     }
     
-    // 🤖 AI FEATURE: Update AI risk assessment
+    //  AI FEATURE: Update AI risk assessment
     function updateAIRiskAssessment(
         uint256 positionId,
         uint256 newRiskScore,
@@ -258,13 +258,13 @@ contract ZetaLendAI {
         
         emit AIRiskUpdate(positionId, newRiskScore, newLiquidationProb);
         
-        // 🤖 AI FEATURE: Auto-liquidate if AI predicts high risk
+        //  AI FEATURE: Auto-liquidate if AI predicts high risk
         if (newLiquidationProb > 90) {
             liquidatePositionAdvanced(positionId);
         }
     }
     
-    // ⚡ GATEWAY API: Multi-chain yield distribution
+    //  GATEWAY API: Multi-chain yield distribution
     function distributeYieldMultiChain(
         address user,
         uint256[] calldata targetChains
@@ -305,7 +305,7 @@ contract ZetaLendAI {
         emit YieldDistributed(user, userYield.totalYield, chainYields);
     }
     
-    // 🤖 AI FEATURE: Execute AI-driven rebalancing
+    //  AI FEATURE: Execute AI-driven rebalancing
     function executeAIRebalance(
         address user,
         uint256[] calldata fromChains,
@@ -315,7 +315,7 @@ contract ZetaLendAI {
     ) external {
         require(msg.sender == user, "Only user");
         
-        // 🤖 AI FEATURE: Validate AI recommendation
+        //  AI FEATURE: Validate AI recommendation
         (uint256 expectedImprovement, uint256 riskReduction, uint256 yieldIncrease) = 
             abi.decode(aiRecommendation, (uint256, uint256, uint256));
         
