@@ -413,7 +413,7 @@ class WalletService {
         value: collateralAmountWei.toString()
       });
 
-      // ✅ FIXED: Create contract with corrected ABI
+      //  Create contract with corrected ABI
       const contract = new ethers.Contract(CONTRACT_ADDRESSES.ZETA_LEND_AI, ZETA_LEND_ABI, signer);
 
       // ✅ FIXED: Encode AI risk data with contract-compatible limits
@@ -458,7 +458,7 @@ class WalletService {
       console.log('🔄 Transaction sent:', tx.hash);
       console.log('⏳ Waiting for confirmation...');
 
-      // ✅ CRITICAL FIX: Better receipt handling with retries and fallback
+      //  Better receipt handling with retries and fallback
       let receipt = null;
       let attempts = 0;
       const maxAttempts = 5;
@@ -492,7 +492,7 @@ class WalletService {
         }
       }
 
-      // ✅ FALLBACK: If receipt still fails, check transaction manually
+      //  FALLBACK: If receipt still fails, check transaction manually
       if (!receipt) {
         console.log('⚠️ Receipt fetch failed, but transaction may have succeeded');
         console.log('🔍 Checking transaction status manually...');
@@ -514,7 +514,7 @@ class WalletService {
           console.log('❌ Manual check also failed:', manualError);
         }
 
-        // ✅ LAST RESORT: Assume success if we got this far
+        //  LAST RESORT: Assume success if we got this far
         console.log('🎯 Assuming transaction succeeded based on successful submission');
         return {
           hash: tx.hash,
@@ -557,7 +557,7 @@ class WalletService {
     } catch (error: any) {
       console.error('❌ Transaction failed:', error);
 
-      // ✅ ENHANCED: Better error classification
+      //  error classification
       if (error.message?.includes('AI: Risk too high')) {
         throw new Error('AI risk assessment failed - risk score exceeds 85. Reduce borrow amount or increase collateral.');
       } else if (error.message?.includes('AI: Liquidation probability too high')) {
@@ -617,7 +617,7 @@ class WalletService {
     };
   }
 
-  // ✅ FIXED: Get user positions using correct contract structure
+  //  Get user positions using correct contract structure
   public async getUserPositions(): Promise<any[]> {
     if (!this.state.isConnected || !this.state.address) {
       console.log('Wallet not connected, returning empty positions');
@@ -634,7 +634,7 @@ class WalletService {
 
       console.log('📊 Getting positions for:', this.state.address);
 
-      // ✅ Get user positions using the correct function
+      //  Get user positions using the correct function
       const positionIds = await contract.getUserPositions(this.state.address);
       console.log('📋 Position IDs:', positionIds.map((id: bigint) => id.toString()));
 
@@ -846,7 +846,7 @@ class WalletService {
     }
   }
 
-  // ✅ ADDED: Update AI risk assessment
+  // Update AI risk assessment
   public async updateAIRisk(positionId: string, riskScore: number, liquidationProb: number): Promise<any> {
     try {
       const contract = await this.getZetaLendContract();
@@ -872,7 +872,7 @@ class WalletService {
     }
   }
 
-  // ✅ ADDED: Liquidate position
+  //  Liquidate position
   public async liquidatePosition(positionId: string): Promise<any> {
     try {
       const contract = await this.getZetaLendContract();
@@ -893,7 +893,7 @@ class WalletService {
     }
   }
 
-  // ✅ ADDED: Execute AI rebalance
+  //  Execute AI rebalance
   public async executeAIRebalance(
     fromChains: number[],
     toChains: number[],
