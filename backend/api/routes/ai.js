@@ -6,7 +6,7 @@ const router = express.Router();
 const geminiService = new GeminiAIService();
 const riskService = new RiskAssessmentService();
 
-// 🤖 AI FEATURE: Risk Assessment API
+//  AI FEATURE: Risk Assessment API
 router.post('/assess-risk', async (req, res) => {
     try {
         const { positionId, positionData } = req.body;
@@ -28,7 +28,7 @@ router.post('/assess-risk', async (req, res) => {
     }
 });
 
-// 🤖 AI FEATURE: Yield Optimization API
+// AI FEATURE: Yield Optimization API
 router.post('/optimize-yield', async (req, res) => {
     try {
         const portfolioData = req.body;
@@ -50,7 +50,7 @@ router.post('/optimize-yield', async (req, res) => {
     }
 });
 
-// 🤖 AI FEATURE: Liquidation Prediction API
+// AI FEATURE: Liquidation Prediction API
 router.post('/predict-liquidation', async (req, res) => {
     try {
         const positionData = req.body;
@@ -72,7 +72,7 @@ router.post('/predict-liquidation', async (req, res) => {
     }
 });
 
-// 🤖 AI FEATURE: Automated Position Monitoring
+// AI FEATURE: Automated Position Monitoring
 router.post('/monitor-positions', async (req, res) => {
     try {
         // In production, this would fetch all active positions from the blockchain
@@ -125,7 +125,7 @@ router.post('/monitor-positions', async (req, res) => {
     }
 });
 
-// 🤖 AI FEATURE: Portfolio Rebalancing Recommendations
+// AI FEATURE: Portfolio Rebalancing Recommendations
 router.post('/rebalance-portfolio', async (req, res) => {
     try {
         const { userId, currentPositions, riskTolerance } = req.body;
@@ -179,5 +179,6 @@ function _generateRebalanceActions(current, recommended) {
         }
     ];
 }
+
 
 module.exports = router;
