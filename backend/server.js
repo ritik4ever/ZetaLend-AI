@@ -12,7 +12,7 @@ app.use(express.json());
 
 // Contract configuration
 const CONTRACT_CONFIG = {
-    zetaLendAI: "0x8cdcc4e2ca3d32d4bc134b6cce408add8d7a19ef",
+    zetaLendAI: "0x353e2E29aF2864E83F7C7001CB3bF7a6E9105021",
     gateway: "0xfEDD7A6e3Ef1cC470fbfbF955a22D793dDC0F44E",
     network: "zetachain_testnet",
     chainId: 7001,
