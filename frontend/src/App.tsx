@@ -55,7 +55,7 @@ const App: React.FC = () => {
     }, []);
 
     useEffect(() => {
-        fetch("http://localhost:3001/api/health")
+        fetch("https://zetalend-ai.onrender.com/api/health")
             .then(res => res.json())
             .then(data => console.log("Backend says:", data))
             .catch(err => console.error("❌ Backend not reachable:", err));
