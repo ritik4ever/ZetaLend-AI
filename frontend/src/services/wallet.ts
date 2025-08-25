@@ -420,9 +420,13 @@ class WalletService {
         value: collateralAmountWei.toString()
       });
 
+<<<<<<< HEAD
       console.log('🔗 Using contract address:', CONTRACT_ADDRESSES.ZETA_LEND_AI);
 
       // Create contract with corrected ABI
+=======
+      //  Create contract with corrected ABI
+>>>>>>> e5a1334bc76a366ca5fdc3e0ace3d0f84937306f
       const contract = new ethers.Contract(CONTRACT_ADDRESSES.ZETA_LEND_AI, ZETA_LEND_ABI, signer);
 
       // Encode AI risk data with contract-compatible limits
@@ -467,7 +471,11 @@ class WalletService {
       console.log('🔄 Transaction sent:', tx.hash);
       console.log('⏳ Waiting for confirmation...');
 
+<<<<<<< HEAD
       // Better receipt handling with retries and fallback
+=======
+      //  Better receipt handling with retries and fallback
+>>>>>>> e5a1334bc76a366ca5fdc3e0ace3d0f84937306f
       let receipt = null;
       let attempts = 0;
       const maxAttempts = 5;
@@ -501,7 +509,11 @@ class WalletService {
         }
       }
 
+<<<<<<< HEAD
       // FALLBACK: If receipt still fails, check transaction manually
+=======
+      //  FALLBACK: If receipt still fails, check transaction manually
+>>>>>>> e5a1334bc76a366ca5fdc3e0ace3d0f84937306f
       if (!receipt) {
         console.log('⚠️ Receipt fetch failed, but transaction may have succeeded');
         console.log('🔍 Checking transaction status manually...');
@@ -539,7 +551,11 @@ class WalletService {
           console.log('❌ Manual check also failed:', manualError);
         }
 
+<<<<<<< HEAD
         // LAST RESORT: Assume success if we got this far
+=======
+        //  LAST RESORT: Assume success if we got this far
+>>>>>>> e5a1334bc76a366ca5fdc3e0ace3d0f84937306f
         console.log('🎯 Assuming transaction succeeded based on successful submission');
 
         const transactionRecord: Transaction = {
@@ -613,7 +629,11 @@ class WalletService {
     } catch (error: any) {
       console.error('❌ Transaction failed:', error);
 
+<<<<<<< HEAD
       // ENHANCED: Better error classification
+=======
+      //  error classification
+>>>>>>> e5a1334bc76a366ca5fdc3e0ace3d0f84937306f
       if (error.message?.includes('AI: Risk too high')) {
         throw new Error('AI risk assessment failed - risk score exceeds 85. Reduce borrow amount or increase collateral.');
       } else if (error.message?.includes('AI: Liquidation probability too high')) {
@@ -646,7 +666,21 @@ class WalletService {
     }
   }
 
+<<<<<<< HEAD
   // Get user positions using correct contract structure
+=======
+    this.transactions.unshift(transaction);
+    this.refreshConnection();
+
+    return {
+      hash: receipt.hash,
+      blockNumber: receipt.blockNumber,
+      gasUsed: receipt.gasUsed?.toString()
+    };
+  }
+
+  //  Get user positions using correct contract structure
+>>>>>>> e5a1334bc76a366ca5fdc3e0ace3d0f84937306f
   public async getUserPositions(): Promise<any[]> {
     if (!this.state.isConnected || !this.state.address) {
       console.log('Wallet not connected, returning empty positions');
@@ -663,7 +697,11 @@ class WalletService {
 
       console.log('📊 Getting positions for:', this.state.address);
 
+<<<<<<< HEAD
       // Get user positions using the correct function
+=======
+      //  Get user positions using the correct function
+>>>>>>> e5a1334bc76a366ca5fdc3e0ace3d0f84937306f
       const positionIds = await contract.getUserPositions(this.state.address);
       console.log('📋 Position IDs:', positionIds.map((id: bigint) => id.toString()));
 
@@ -957,7 +995,11 @@ class WalletService {
     }
   }
 
+<<<<<<< HEAD
   // Liquidate position
+=======
+  //  Liquidate position
+>>>>>>> e5a1334bc76a366ca5fdc3e0ace3d0f84937306f
   public async liquidatePosition(positionId: string): Promise<any> {
     try {
       const contract = await this.getZetaLendContract();
@@ -978,7 +1020,11 @@ class WalletService {
     }
   }
 
+<<<<<<< HEAD
   // Execute AI rebalance
+=======
+  //  Execute AI rebalance
+>>>>>>> e5a1334bc76a366ca5fdc3e0ace3d0f84937306f
   public async executeAIRebalance(
     fromChains: number[],
     toChains: number[],

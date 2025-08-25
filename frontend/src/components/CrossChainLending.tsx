@@ -106,6 +106,10 @@ const CrossChainLendingInterface: React.FC<CrossChainLendingProps> = ({
                 }
             };
 
+<<<<<<< HEAD
+=======
+            //  REAL AI INTEGRATION - Using enhanced AI service
+>>>>>>> e5a1334bc76a366ca5fdc3e0ace3d0f84937306f
             const riskAssessment = await aiService.assessRisk(positionData);
 
             setAiRiskData({
@@ -151,6 +155,10 @@ const CrossChainLendingInterface: React.FC<CrossChainLendingProps> = ({
         return (parseFloat(formData.borrowAmount) / parseFloat(formData.collateralAmount)) * 100;
     };
 
+<<<<<<< HEAD
+=======
+    //   Using the working walletService instead of missing zetaChainService
+>>>>>>> e5a1334bc76a366ca5fdc3e0ace3d0f84937306f
     const handleCreatePosition = async () => {
         if (!userAddress) {
             alert('Please connect your wallet first');
@@ -159,7 +167,11 @@ const CrossChainLendingInterface: React.FC<CrossChainLendingProps> = ({
 
         setLoading(true);
         try {
+<<<<<<< HEAD
             // Input validation
+=======
+            //   Input validation with new limits
+>>>>>>> e5a1334bc76a366ca5fdc3e0ace3d0f84937306f
             if (!formData.collateralAmount || !formData.borrowAmount) {
                 throw new Error('Please enter both collateral and borrow amounts');
             }
@@ -180,7 +192,11 @@ const CrossChainLendingInterface: React.FC<CrossChainLendingProps> = ({
                 throw new Error(`LTV (${currentLTV.toFixed(1)}%) exceeds maximum (${formData.maxLTV}%)`);
             }
 
+<<<<<<< HEAD
             // Validate AI risk parameters
+=======
+            //  Validate AI risk parameters against contract limits
+>>>>>>> e5a1334bc76a366ca5fdc3e0ace3d0f84937306f
             if (aiRiskData) {
                 if (aiRiskData.riskScore > 85) {
                     throw new Error(`AI risk score (${aiRiskData.riskScore}) exceeds contract limit (85). Reduce borrow amount.`);
@@ -238,6 +254,10 @@ const CrossChainLendingInterface: React.FC<CrossChainLendingProps> = ({
 
             console.log('🚀 Creating REAL blockchain transaction...');
 
+<<<<<<< HEAD
+=======
+            // Use the updated wallet service
+>>>>>>> e5a1334bc76a366ca5fdc3e0ace3d0f84937306f
             const result = await walletService.createLendingPosition(
                 formData.collateralAmount,
                 formData.borrowAmount,
@@ -709,5 +729,6 @@ ${result.gasUsed && result.gasUsed !== 'Unknown (RPC delay)' ? `- Gas Used: ${re
         </div>
     );
 };
+
 
 export default CrossChainLendingInterface;

@@ -12,7 +12,7 @@ contract ZetaLendReceiver_Polygon {
     address public zetaLendMainContract;
     mapping(bytes32 => bool) public processedMessages;
     
-    // ✅ FIXED: Correct checksummed addresses for Polygon
+    //  Correct checksummed addresses for Polygon
     address public constant USDC = 0x2791Bca1f2de4661ED88A30C99A7a9449Aa84174;
     address public constant USDT = 0xc2132D05D31c914a87C6611C10748AEb04B58e8F;
     address public constant WETH = 0x7ceB23fD6bC0adD59E62ac25578270cFf1b9f619;
@@ -79,7 +79,7 @@ contract ZetaLendReceiver_Polygon {
         );
     }
     
-    // ✅ FIXED: Changed from view to pure
+    // Changed from view to pure
     function getMATICPrice() external pure returns (uint256) {
         return 1 * 1e18; // Mock: $1 per MATIC
     }
@@ -100,4 +100,5 @@ contract ZetaLendReceiver_Polygon {
     }
     
     receive() external payable {}
+
 }

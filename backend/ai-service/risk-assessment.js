@@ -6,7 +6,7 @@ class RiskAssessmentService {
         this.riskCache = new Map();
     }
 
-    // 🤖 AI FEATURE: Real-time risk monitoring
+    //  AI FEATURE: Real-time risk monitoring
     async assessPositionRisk(positionId, positionData) {
         const cacheKey = `${positionId}-${Date.now() - (Date.now() % 300000)}`; // 5min cache
 
@@ -116,5 +116,6 @@ class RiskAssessmentService {
         };
     }
 }
+
 
 module.exports = RiskAssessmentService;

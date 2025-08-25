@@ -12,7 +12,7 @@ contract ZetaLendReceiver_ETH {
     address public zetaLendMainContract;
     mapping(bytes32 => bool) public processedMessages;
     
-    // ✅ FIXED: Correct checksummed addresses
+    //  Correct checksummed addresses
     address public constant USDC = 0xa0b86A33E6441029BD0d40e7d15A79f5B92cD8bA;
     address public constant USDT = 0xdAC17F958D2ee523a2206206994597C13D831ec7;
     address public constant WETH = 0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2;
@@ -79,7 +79,7 @@ contract ZetaLendReceiver_ETH {
         );
     }
     
-    // ✅ FIXED: Changed from view to pure
+    //  Changed from view to pure
     function getETHPrice() external pure returns (uint256) {
         return 2000 * 1e18; // Mock: $2000 per ETH
     }
@@ -100,4 +100,5 @@ contract ZetaLendReceiver_ETH {
     }
     
     receive() external payable {}
+
 }

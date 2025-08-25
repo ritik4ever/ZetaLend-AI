@@ -12,7 +12,7 @@ contract ZetaLendReceiver_BSC {
     address public zetaLendMainContract;
     mapping(bytes32 => bool) public processedMessages;
     
-    // ✅ FIXED: Correct checksummed addresses for BSC
+    // Correct checksummed addresses for BSC
     address public constant USDT = 0x55d398326f99059fF775485246999027B3197955;
     address public constant BUSD = 0xe9e7CEA3DedcA5984780Bafc599bD69ADd087D56;
     address public constant WBNB = 0xbb4CdB9CBd36B01bD1cBaEBF2De08d9173bc095c;
@@ -79,7 +79,7 @@ contract ZetaLendReceiver_BSC {
         );
     }
     
-    // ✅ FIXED: Changed from view to pure
+    //  Changed from view to pure
     function getBNBPrice() external pure returns (uint256) {
         return 300 * 1e18; // Mock: $300 per BNB
     }
@@ -100,4 +100,5 @@ contract ZetaLendReceiver_BSC {
     }
     
     receive() external payable {}
+
 }

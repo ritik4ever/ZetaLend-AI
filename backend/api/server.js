@@ -22,7 +22,7 @@ app.get(['/health', '/api/health'], (req, res) => {
     res.json({ status: 'ZetaLend AI Backend Running', timestamp: new Date().toISOString() });
 });
 
-// 🤖 AI FEATURE: Automated risk monitoring
+// AI FEATURE: Automated risk monitoring
 cron.schedule('*/5 * * * *', async () => {
     console.log('Running automated risk assessment...');
     try {
@@ -40,4 +40,5 @@ app.listen(PORT, () => {
     console.log(`🚀 ZetaLend AI Backend running on port ${PORT}`);
     console.log(`🤖 AI Risk Monitoring: Active`);
     console.log(`🔗 Cross-Chain Gateway: Ready`);
+
 });
