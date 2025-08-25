@@ -432,217 +432,6 @@ ${result.gasUsed && result.gasUsed !== 'Unknown (RPC delay)' ? `- Gas Used: ${re
                                 />
                             </div>
                         </div>
-
-                        {/* LTV Helper */}
-                        {formData.collateralAmount && (
-                            <div className="bg-gray-50 p-4 rounded-xl">
-                                <div className="flex justify-between text-sm mb-2">
-                                    <span className="text-gray-600">Max borrow at {formData.maxLTV}% LTV:</span>
-                                    <span className="font-medium">{calculateMaxBorrow()} {formData.borrowToken}</span>
-                                </div>
-                                <div className="flex justify-between text-sm">
-                                    <span className="text-gray-600">Current LTV:</span>
-                                    <span className={`font-medium ${getCurrentLTV() > 80 ? 'text-red-600' : getCurrentLTV() > 60 ? 'text-amber-600' : 'text-emerald-600'}`}>
-                                        {getCurrentLTV().toFixed(1)}%
-                                    </span>
-                                </div>
-                            </div>
-                        )}
-                    </div>
-
-                    {/* LTV Slider */}
-                    <div className="mb-8">
-                        <div className="flex justify-between items-center mb-3">
-                            <label className="text-sm font-medium text-gray-700">
-                                Maximum LTV
-                            </label>
-                            <span className="text-sm font-medium text-gray-900">{formData.maxLTV}%</span>
-                        </div>
-                        <input
-                            type="range"
-                            min="30"
-                            max="85"
-                            value={formData.maxLTV}
-                            onChange={(e) => setFormData({ ...formData, maxLTV: parseInt(e.target.value) })}
-                            className="w-full h-2 bg-gray-200 rounded-lg cursor-pointer"
-                        />
-                        <div className="flex justify-between text-xs text-gray-500 mt-1">
-                            <span>Safe (30%)</span>
-                            <span>Risky (85%)</span>
-                        </div>
-                    </div>
-
-                    {/* Submit Button */}
-                    <button
-                        onClick={handleCreatePosition}
-                        disabled={loading || !formData.collateralAmount || !formData.borrowAmount}
-                        className={`w-full py-4 px-6 rounded-xl font-semibold text-white transition-all duration-200 ${loading || !formData.collateralAmount || !formData.borrowAmount
-                            ? 'bg-gray-300 cursor-not-allowed'
-                            : 'bg-gray-900 hover:bg-gray-800 transform hover:scale-[1.02] shadow-lg hover:shadow-xl'
-                            }`}
-                    >
-                        {loading ? (
-                            <div className="flex items-center justify-center">
-                                <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white mr-3"></div>
-                                Creating Transaction...
-                            </div>
-                        ) : (
-                            'Create Position'
-                        )}
-                    </button>
-
-                    {loading && (
-                        <div className="mt-4 text-center text-sm text-gray-600">
-                            <p>Submitting to ZetaChain blockchain...</p>
-                            <p className="text-xs mt-1">This will create a real transaction with gas fees</p>
-                        </div>
-                    )}
-                </div>
-
-                {/* Right Panel: AI Risk Assessment */}
-                <div className="bg-white rounded-2xl p-8 shadow-sm border border-gray-100">
-                    <h3 className="text-xl font-semibold text-gray-900 mb-8">AI Risk Assessment</h3>
-
-                    {calculatingRisk ? (
-                        <div className="text-center py-12">
-                            <div className="w-16 h-16 mx-auto mb-4 bg-gray-50 rounded-full flex items-center justify-center">
-                                <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-gray-900"></div>
-                            </div>
-                            <p className="text-gray-600 mb-2">AI analyzing your position...</p>
-                            <p className="text-sm text-gray-500">Analyzing market conditions, volatility, and cross-chain risks</p>
-                        </div>
-                    ) : aiRiskData ? (
-                        <div className="space-y-6">
-                            {/* Risk Score */}
-                            <div className="text-center">
-                                <div className={`inline-flex items-center px-4 py-2 rounded-full text-sm font-medium ${getRiskBadgeColor(aiRiskData.riskScore)}`}>
-                                    Risk Score: {aiRiskData.riskScore}/100
-                                </div>
-                            </div>
-
-                            {/* Key Metrics Grid */}
-                            <div className="grid grid-cols-2 gap-4">
-                                <div className="text-center p-4 bg-gray-50 rounded-xl">
-                                    <p className="text-sm text-gray-600 mb-1">Liquidation Risk</p>
-                                    <p className="text-xl font-bold text-gray-900">
-                                        {aiRiskData.liquidationProbability}%
-                                    </p>
-                                </div>
-                                <div className="text-center p-4 bg-gray-50 rounded-xl">
-                                    <p className="text-sm text-gray-600 mb-1">Recommended LTV</p>
-                                    <p className="text-xl font-bold text-gray-900">
-                                        {aiRiskData.recommendedLTV}%
-                                    </p>
-                                </div>
-                            </div>
-
-                            {/* AI Confidence */}
-                            <div className="text-center p-4 bg-gray-50 rounded-xl">
-                                <p className="text-sm text-gray-600 mb-1">AI Confidence</p>
-                                <p className="text-lg font-bold text-gray-900">{aiRiskData.aiConfidence}%</p>
-                            </div>
-
-                            {/* Market Analysis */}
-                            <div>
-                                <h4 className="font-medium text-gray-900 mb-3">Market Analysis</h4>
-                                <p className="text-sm text-gray-700 bg-gray-50 p-4 rounded-xl">
-                                    {aiRiskData.marketAnalysis}
-                                </p>
-                            </div>
-
-                            {/* AI Recommendations */}
-                            <div>
-                                <h4 className="font-medium text-gray-900 mb-3">Recommendations</h4>
-                                <ul className="space-y-2">
-                                    {aiRiskData.recommendations.map((rec, index) => (
-                                        <li key={index} className="flex items-start text-sm">
-                                            <span className="text-gray-400 mr-3 mt-0.5">•</span>
-                                            <span className="text-gray-700">{rec}</span>
-                                        </li>
-                                    ))}
-                                </ul>
-                            </div>
-
-                            {/* Risk Factors */}
-                            <div>
-                                <h4 className="font-medium text-gray-900 mb-3">Risk Factors</h4>
-                                <ul className="space-y-2">
-                                    {aiRiskData.riskFactors.map((factor, index) => (
-                                        <li key={index} className="flex items-start text-sm">
-                                            <span className="text-gray-400 mr-3 mt-0.5">•</span>
-                                            <span className="text-gray-700">{factor}</span>
-                                        </li>
-                                    ))}
-                                </ul>
-                            </div>
-
-                            {/* Cross-Chain Indicator */}
-                            {formData.collateralChain !== formData.borrowChain && (
-                                <div className="bg-blue-50 p-4 rounded-xl border border-blue-100">
-                                    <div className="flex items-center">
-                                        <span className="text-blue-600 text-xl mr-3">🔗</span>
-                                        <div>
-                                            <p className="font-medium text-blue-800">Cross-Chain Position</p>
-                                            <p className="text-sm text-blue-600">
-                                                {SUPPORTED_CHAINS[formData.collateralChain as keyof typeof SUPPORTED_CHAINS]?.name} →
-                                                {SUPPORTED_CHAINS[formData.borrowChain as keyof typeof SUPPORTED_CHAINS]?.name}
-                                            </p>
-                                        </div>
-                                    </div>
-                                </div>
-                            )}
-                        </div>
-                    ) : (
-                        <div className="text-center py-12">
-                            <div className="w-16 h-16 mx-auto mb-4 bg-gray-50 rounded-full flex items-center justify-center">
-                                <span className="text-2xl">🤖</span>
-                            </div>
-                            <p className="text-gray-600 mb-2">
-                                Enter amounts to see AI risk assessment
-                            </p>
-                            <p className="text-sm text-gray-500">
-                                Our AI will analyze market conditions, volatility, and cross-chain risks in real-time
-                            </p>
-                        </div>
-                    )}
-                </div>
-            </div>
-
-            {/* Feature Highlights */}
-            <div className="grid md:grid-cols-3 gap-6">
-                <div className="bg-white p-6 rounded-2xl shadow-sm border border-gray-100">
-                    <div className="w-12 h-12 bg-blue-50 rounded-xl flex items-center justify-center mb-4">
-                        <span className="text-xl">🔗</span>
-                    </div>
-                    <h4 className="font-semibold text-gray-900 mb-2">Universal Contracts</h4>
-                    <p className="text-sm text-gray-600">
-                        ZetaChain Universal Contracts orchestrate seamless cross-chain operations
-                    </p>
-                </div>
-                <div className="bg-white p-6 rounded-2xl shadow-sm border border-gray-100">
-                    <div className="w-12 h-12 bg-emerald-50 rounded-xl flex items-center justify-center mb-4">
-                        <span className="text-xl">⚡</span>
-                    </div>
-                    <h4 className="font-semibold text-gray-900 mb-2">Gateway API</h4>
-                    <p className="text-sm text-gray-600">
-                        Innovative use of ZetaChain Gateway API for instant cross-chain execution
-                    </p>
-                </div>
-                <div className="bg-white p-6 rounded-2xl shadow-sm border border-gray-100">
-                    <div className="w-12 h-12 bg-purple-50 rounded-xl flex items-center justify-center mb-4">
-                        <span className="text-xl">🤖</span>
-                    </div>
-                    <h4 className="font-semibold text-gray-900 mb-2">AI Features</h4>
-                    <p className="text-sm text-gray-600">
-                        Google Gemini AI powers real-time risk assessment and portfolio optimization
-                    </p>
-                </div>
-            </div>
-        </div>
-    );
-};
-
-export default CrossChainLendingInterface;
                     </div>
 
                     {/* Divider */}
@@ -714,3 +503,239 @@ export default CrossChainLendingInterface;
                                 />
                             </div>
                         </div>
+                    </div>
+
+                    {/* LTV Slider */}
+                    <div className="mb-8">
+                        <label className="block text-sm font-medium text-gray-700 mb-3">
+                            Max LTV Ratio: {formData.maxLTV}%
+                        </label>
+                        <div className="flex items-center space-x-4">
+                            <span className="text-sm text-gray-500">50%</span>
+                            <input
+                                type="range"
+                                min="50"
+                                max="85"
+                                step="5"
+                                value={formData.maxLTV}
+                                onChange={(e) => setFormData({ ...formData, maxLTV: parseInt(e.target.value) })}
+                                className="flex-1 h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer"
+                            />
+                            <span className="text-sm text-gray-500">85%</span>
+                        </div>
+                        {formData.collateralAmount && (
+                            <p className="text-sm text-gray-500 mt-2">
+                                Max borrow: {calculateMaxBorrow()} {formData.borrowToken}
+                            </p>
+                        )}
+                    </div>
+
+                    {/* Create Position Button */}
+                    <button
+                        onClick={handleCreatePosition}
+                        disabled={loading || !formData.collateralAmount || !formData.borrowAmount}
+                        className={`w-full py-4 px-6 rounded-xl font-semibold text-white transition-all ${
+                            loading || !formData.collateralAmount || !formData.borrowAmount
+                                ? 'bg-gray-300 cursor-not-allowed'
+                                : 'bg-blue-600 hover:bg-blue-700 active:bg-blue-800'
+                        }`}
+                    >
+                        {loading ? (
+                            <div className="flex items-center justify-center">
+                                <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin mr-2"></div>
+                                Creating Position...
+                            </div>
+                        ) : (
+                            'Create Cross-Chain Position'
+                        )}
+                    </button>
+                </div>
+
+                {/* Right Panel: AI Risk Analysis */}
+                <div className="bg-white rounded-2xl p-8 shadow-sm border border-gray-100">
+                    <div className="flex items-center justify-between mb-8">
+                        <h3 className="text-xl font-semibold text-gray-900">AI Risk Analysis</h3>
+                        {calculatingRisk && (
+                            <div className="flex items-center text-sm text-gray-500">
+                                <div className="w-4 h-4 border-2 border-gray-300 border-t-blue-500 rounded-full animate-spin mr-2"></div>
+                                Analyzing...
+                            </div>
+                        )}
+                    </div>
+
+                    {aiRiskData ? (
+                        <div className="space-y-6">
+                            {/* Risk Score */}
+                            <div className="p-6 bg-gray-50 rounded-xl">
+                                <div className="flex items-center justify-between mb-4">
+                                    <span className="text-lg font-semibold text-gray-900">Risk Score</span>
+                                    <span className={`text-3xl font-bold ${getRiskColor(aiRiskData.riskScore)}`}>
+                                        {aiRiskData.riskScore}/100
+                                    </span>
+                                </div>
+                                <div className="w-full bg-gray-200 rounded-full h-3">
+                                    <div
+                                        className={`h-3 rounded-full transition-all duration-1000 ${
+                                            aiRiskData.riskScore < 30 ? 'bg-emerald-500' :
+                                            aiRiskData.riskScore < 60 ? 'bg-amber-500' : 'bg-red-500'
+                                        }`}
+                                        style={{ width: `${aiRiskData.riskScore}%` }}
+                                    />
+                                </div>
+                            </div>
+
+                            {/* Key Metrics */}
+                            <div className="grid grid-cols-2 gap-4">
+                                <div className="p-4 bg-gray-50 rounded-xl">
+                                    <div className="text-sm text-gray-600 mb-1">Current LTV</div>
+                                    <div className="text-2xl font-bold text-gray-900">
+                                        {getCurrentLTV().toFixed(1)}%
+                                    </div>
+                                </div>
+                                <div className="p-4 bg-gray-50 rounded-xl">
+                                    <div className="text-sm text-gray-600 mb-1">Liquidation Risk</div>
+                                    <div className={`text-2xl font-bold ${getRiskColor(aiRiskData.liquidationProbability)}`}>
+                                        {aiRiskData.liquidationProbability}%
+                                    </div>
+                                </div>
+                            </div>
+
+                            {/* Recommended LTV */}
+                            <div className={`p-4 rounded-xl ${getRiskBadgeColor(aiRiskData.riskScore)}`}>
+                                <div className="flex items-center justify-between">
+                                    <span className="font-medium">AI Recommended LTV</span>
+                                    <span className="font-bold">{aiRiskData.recommendedLTV}%</span>
+                                </div>
+                            </div>
+
+                            {/* Market Analysis */}
+                            <div className="p-4 bg-blue-50 rounded-xl border border-blue-200">
+                                <h4 className="font-semibold text-blue-900 mb-2">Market Analysis</h4>
+                                <p className="text-sm text-blue-800">{aiRiskData.marketAnalysis}</p>
+                            </div>
+
+                            {/* Risk Factors */}
+                            <div>
+                                <h4 className="font-semibold text-gray-900 mb-3">Risk Factors</h4>
+                                <div className="space-y-2">
+                                    {aiRiskData.riskFactors.map((factor, index) => (
+                                        <div key={index} className="flex items-center text-sm text-gray-600">
+                                            <span className="w-2 h-2 bg-amber-400 rounded-full mr-3"></span>
+                                            {factor}
+                                        </div>
+                                    ))}
+                                </div>
+                            </div>
+
+                            {/* Recommendations */}
+                            <div>
+                                <h4 className="font-semibold text-gray-900 mb-3">AI Recommendations</h4>
+                                <div className="space-y-2">
+                                    {aiRiskData.recommendations.map((rec, index) => (
+                                        <div key={index} className="flex items-start text-sm text-gray-600">
+                                            <span className="w-2 h-2 bg-emerald-400 rounded-full mr-3 mt-1.5 flex-shrink-0"></span>
+                                            {rec}
+                                        </div>
+                                    ))}
+                                </div>
+                            </div>
+
+                            {/* AI Confidence */}
+                            <div className="pt-4 border-t border-gray-200">
+                                <div className="flex items-center justify-between text-sm">
+                                    <span className="text-gray-600">AI Confidence</span>
+                                    <span className="font-medium text-gray-900">{aiRiskData.aiConfidence}%</span>
+                                </div>
+                            </div>
+                        </div>
+                    ) : (
+                        <div className="text-center py-12">
+                            <div className="w-16 h-16 mx-auto mb-4 bg-gray-50 rounded-full flex items-center justify-center">
+                                <span className="text-2xl">🤖</span>
+                            </div>
+                            <h3 className="text-lg font-semibold text-gray-900 mb-2">AI Risk Analysis</h3>
+                            <p className="text-gray-600 mb-4">
+                                Enter collateral and borrow amounts to get real-time AI risk assessment
+                            </p>
+                            {userAddress && formData.collateralAmount && formData.borrowAmount && (
+                                <div className="text-sm text-blue-600">
+                                    Analyzing position risk...
+                                </div>
+                            )}
+                        </div>
+                    )}
+                </div>
+            </div>
+
+            {/* Position Summary */}
+            {formData.collateralAmount && formData.borrowAmount && (
+                <div className="bg-gradient-to-r from-blue-50 to-indigo-50 rounded-2xl p-8 border border-blue-100">
+                    <h3 className="text-xl font-semibold text-gray-900 mb-6">Position Summary</h3>
+                    
+                    <div className="grid md:grid-cols-2 gap-8">
+                        <div>
+                            <h4 className="font-semibold text-gray-900 mb-4">Collateral</h4>
+                            <div className="space-y-3">
+                                <div className="flex justify-between">
+                                    <span className="text-gray-600">Chain:</span>
+                                    <span className="font-medium">
+                                        {SUPPORTED_CHAINS[formData.collateralChain as keyof typeof SUPPORTED_CHAINS]?.name}
+                                    </span>
+                                </div>
+                                <div className="flex justify-between">
+                                    <span className="text-gray-600">Token:</span>
+                                    <span className="font-medium">{formData.collateralToken}</span>
+                                </div>
+                                <div className="flex justify-between">
+                                    <span className="text-gray-600">Amount:</span>
+                                    <span className="font-medium">{formData.collateralAmount}</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div>
+                            <h4 className="font-semibold text-gray-900 mb-4">Borrow</h4>
+                            <div className="space-y-3">
+                                <div className="flex justify-between">
+                                    <span className="text-gray-600">Chain:</span>
+                                    <span className="font-medium">
+                                        {SUPPORTED_CHAINS[formData.borrowChain as keyof typeof SUPPORTED_CHAINS]?.name}
+                                    </span>
+                                </div>
+                                <div className="flex justify-between">
+                                    <span className="text-gray-600">Token:</span>
+                                    <span className="font-medium">{formData.borrowToken}</span>
+                                </div>
+                                <div className="flex justify-between">
+                                    <span className="text-gray-600">Amount:</span>
+                                    <span className="font-medium">{formData.borrowAmount}</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div className="mt-6 pt-6 border-t border-blue-200">
+                        <div className="grid grid-cols-3 gap-4 text-center">
+                            <div>
+                                <div className="text-2xl font-bold text-gray-900">{getCurrentLTV().toFixed(1)}%</div>
+                                <div className="text-sm text-gray-600">Current LTV</div>
+                            </div>
+                            <div>
+                                <div className="text-2xl font-bold text-gray-900">{formData.maxLTV}%</div>
+                                <div className="text-sm text-gray-600">Max LTV</div>
+                            </div>
+                            <div>
+                                <div className={`text-2xl font-bold ${aiRiskData ? getRiskColor(aiRiskData.riskScore) : 'text-gray-400'}`}>
+                                    {aiRiskData?.riskScore || '--'}/100
+                                </div>
+                                <div className="text-sm text-gray-600">AI Risk Score</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            )}
+        </div>
+    );
+};
+
+export default CrossChainLendingInterface;
