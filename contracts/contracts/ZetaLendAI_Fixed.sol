@@ -56,10 +56,7 @@ contract ZetaLendAI {
     mapping(uint256 => uint256) public chainUtilization;
     mapping(uint256 => address) public receiverContracts;
     
-    // ✅ RECEIVER CONTRACTS WITH EXPLICIT STORAGE VERIFICATION
-    mapping(uint256 => address) public receiverContracts;
-    
-    // ✅ STORAGE TEST VARIABLES
+    // Storage test variables
     uint256 public storageTestValue;
     mapping(uint256 => uint256) public storageTestMapping;
     
@@ -97,12 +94,10 @@ contract ZetaLendAI {
         uint256[] affectedChains
     );
 
-<<<<<<< HEAD
-    event ReceiverContractSet(uint256 indexed chainId, address indexed receiver);
-    event StorageTest(string message, uint256 value);
-=======
-    event ReceiverContractSet(uint256 indexed chainId, address receiver);
->>>>>>> e5a1334bc76a366ca5fdc3e0ace3d0f84937306f
+    event ReceiverContractSet(
+        uint256 indexed chainId,
+        address indexed receiver
+    );
 
     modifier onlyAdmin() {
         require(msg.sender == admin, "Only admin");
@@ -120,130 +115,24 @@ contract ZetaLendAI {
         authorizedCallers[msg.sender] = true;
         aiModelVersion = 1;
         
+        // Initialize chain tokens
         chainTokens[1] = 0x5F0b1a82749cb4E2278EC87F8BF6B618dC71a8bf;
         chainTokens[137] = 0x48f80608B672DC30DC7e3dbBd0343c5F02C738Eb;
         chainTokens[56] = 0x13A0c5930C028511Dc02665E7285134B6d11A5f4;
         
-<<<<<<< HEAD
-        // ✅ INITIALIZE STORAGE TEST
-        storageTestValue = 12345;
-        storageTestMapping[1] = 999;
-        storageTestMapping[137] = 888;
-        storageTestMapping[56] = 777;
-    }
-    
-    // ✅ BULLETPROOF RECEIVER FUNCTIONS WITH FORCED VERIFICATION
-    function setReceiverContract(uint256 chainId, address receiver) external onlyAdmin {
-        require(receiver != address(0), "Invalid receiver address");
-        require(chainId == 1 || chainId == 137 || chainId == 56, "Unsupported chain");
-        
-        // Test storage first
-        uint256 testBefore = storageTestValue;
-        storageTestValue = 999999;
-        require(storageTestValue == 999999, "CRITICAL: Basic storage is broken");
-        storageTestValue = testBefore; // Restore
-        
-        // Store the receiver
-        receiverContracts[chainId] = receiver;
-        
-        // MANDATORY: Verify storage worked immediately
-        address stored = receiverContracts[chainId];
-        require(stored == receiver, "CRITICAL: Receiver storage verification failed");
-        require(stored != address(0), "CRITICAL: Receiver storage returned zero");
-        
-        emit StorageTest("Receiver set successfully", chainId);
-        emit ReceiverContractSet(chainId, receiver);
-    }
-    
-    function setReceiverContracts(uint256[] calldata chainIds, address[] calldata receivers) external onlyAdmin {
-        require(chainIds.length == receivers.length, "Array length mismatch");
-        require(chainIds.length > 0, "Empty arrays not allowed");
-        
-        for (uint256 i = 0; i < chainIds.length; i++) {
-            require(receivers[i] != address(0), "Invalid receiver address");
-            require(chainIds[i] == 1 || chainIds[i] == 137 || chainIds[i] == 56, "Unsupported chain");
-            
-            // Store the receiver
-            receiverContracts[chainIds[i]] = receivers[i];
-            
-            // MANDATORY: Verify each storage operation
-            address stored = receiverContracts[chainIds[i]];
-            require(stored == receivers[i], "CRITICAL: Batch receiver storage failed");
-            require(stored != address(0), "CRITICAL: Batch receiver storage returned zero");
-            
-            emit ReceiverContractSet(chainIds[i], receivers[i]);
-        }
-        
-        emit StorageTest("Batch receivers set successfully", chainIds.length);
-    }
-    
-    // ✅ EXPLICIT GETTER FUNCTIONS
-    function getReceiverContract(uint256 chainId) external view returns (address) {
-        return receiverContracts[chainId];
-    }
-    
-    function getReceiverContracts() external view returns (uint256[] memory chains, address[] memory receivers) {
-        chains = new uint256[](3);
-        receivers = new address[](3);
-        
-        chains[0] = 1;
-        chains[1] = 137;
-        chains[2] = 56;
-        
-        receivers[0] = receiverContracts[1];
-        receivers[1] = receiverContracts[137];
-        receivers[2] = receiverContracts[56];
-    }
-    
-    // ✅ STORAGE TESTING FUNCTIONS
-    function testBasicStorage() external view returns (uint256 testValue, uint256 ethTest, uint256 polygonTest, uint256 bscTest) {
-        testValue = storageTestValue;
-        ethTest = storageTestMapping[1];
-        polygonTest = storageTestMapping[137];
-        bscTest = storageTestMapping[56];
-    }
-    
-    function testReceiverStorage() external view returns (bool eth, bool polygon, bool bsc, address ethAddr, address polygonAddr, address bscAddr) {
-        ethAddr = receiverContracts[1];
-        polygonAddr = receiverContracts[137];
-        bscAddr = receiverContracts[56];
-        
-        eth = (ethAddr != address(0));
-        polygon = (polygonAddr != address(0));
-        bsc = (bscAddr != address(0));
-    }
-    
-    function forceSetReceiver(uint256 chainId, address receiver) external onlyAdmin {
-        // Force set with assembly to bypass any potential issues
-        assembly {
-            let slot := receiverContracts.slot
-            mstore(0x00, chainId)
-            mstore(0x20, slot)
-            let valueSlot := keccak256(0x00, 0x40)
-            sstore(valueSlot, receiver)
-        }
-        emit ReceiverContractSet(chainId, receiver);
-    }
-    
-    // ✅ MAIN LENDING FUNCTION (unchanged)
-=======
+        // Initialize receiver contracts (set to zero initially)
         receiverContracts[1] = address(0);
         receiverContracts[137] = address(0);
         receiverContracts[56] = address(0);
     }
     
->>>>>>> e5a1334bc76a366ca5fdc3e0ace3d0f84937306f
     function lendCrossChain(
         uint256 collateralAmount,
         uint256 borrowAmount,
         uint256 borrowChain,
         address borrowToken,
         bytes calldata aiRiskDataEncoded
-<<<<<<< HEAD
     ) external payable whenNotPaused {
-=======
-    ) external payable {
->>>>>>> e5a1334bc76a366ca5fdc3e0ace3d0f84937306f
         _validateLendingParams(collateralAmount, borrowAmount, borrowChain);
         
         uint256 positionId = _createPosition(
@@ -275,12 +164,7 @@ contract ZetaLendAI {
         );
         
         if (borrowChain != block.chainid) {
-<<<<<<< HEAD
-            address receiver = receiverContracts[borrowChain];
-            require(receiver != address(0), "No receiver contract for target chain");
-=======
             require(receiverContracts[borrowChain] != address(0), "No receiver contract for target chain");
->>>>>>> e5a1334bc76a366ca5fdc3e0ace3d0f84937306f
         }
         
         uint256 currentLTV = (borrowAmount * 100) / collateralAmount;
@@ -294,12 +178,13 @@ contract ZetaLendAI {
         address borrowToken,
         bytes calldata aiRiskDataEncoded
     ) internal returns (uint256 positionId) {
-<<<<<<< HEAD
+        // Default values
         uint256 riskScore = 45;
         uint256 recommendedLTV = 65;
         uint256 liquidationProb = 15;
         uint256 optimizedChain = borrowChain;
         
+        // Try to decode AI risk data with fallback to defaults
         if (aiRiskDataEncoded.length > 0) {
             try this.decodeAIRiskData(aiRiskDataEncoded) returns (
                 uint256 _riskScore,
@@ -312,15 +197,10 @@ contract ZetaLendAI {
                 liquidationProb = _liquidationProb;
                 optimizedChain = _optimizedChain;
             } catch {
-                // Use defaults
+                // Use default values on decode failure
             }
         }
         
-=======
-        (uint256 riskScore, uint256 recommendedLTV, uint256 liquidationProb, uint256 optimizedChain) = 
-            abi.decode(aiRiskDataEncoded, (uint256, uint256, uint256, uint256));
-            
->>>>>>> e5a1334bc76a366ca5fdc3e0ace3d0f84937306f
         require(riskScore <= 85, "AI: Risk too high");
         require(liquidationProb <= 50, "AI: Liquidation probability too high");
         
@@ -362,7 +242,6 @@ contract ZetaLendAI {
         );
     }
     
-<<<<<<< HEAD
     function decodeAIRiskData(bytes calldata data) external pure returns (
         uint256 riskScore,
         uint256 recommendedLTV,
@@ -372,8 +251,6 @@ contract ZetaLendAI {
         return abi.decode(data, (uint256, uint256, uint256, uint256));
     }
     
-=======
->>>>>>> e5a1334bc76a366ca5fdc3e0ace3d0f84937306f
     function _executeLending(
         uint256 positionId,
         uint256 borrowChain,
@@ -401,25 +278,16 @@ contract ZetaLendAI {
             block.timestamp,
             "BORROW"
         );
-<<<<<<< HEAD
         
         address targetReceiver = receiverContracts[targetChain];
         require(targetReceiver != address(0), "Receiver contract not set for target chain");
         
         try gateway.call(
-=======
-        
-        address targetReceiver = receiverContracts[targetChain];
-        require(targetReceiver != address(0), "Receiver contract not set for target chain");
-        
-        gateway.call(
->>>>>>> e5a1334bc76a366ca5fdc3e0ace3d0f84937306f
             abi.encodePacked(targetReceiver),
             targetChain,
             message,
             1000000,
             RevertOptions(address(this), false, address(0), "", 0)
-<<<<<<< HEAD
         ) {
             emit CrossChainMessageSent(positionId, targetChain, "BORROW", targetReceiver);
         } catch Error(string memory reason) {
@@ -430,39 +298,6 @@ contract ZetaLendAI {
             } else {
                 revert("Gateway call failed: Low-level error");
             }
-=======
-        );
-        
-        emit CrossChainMessageSent(positionId, targetChain, "BORROW", targetReceiver);
-    }
-    
-    function _executeSameChainBorrow(
-        uint256 positionId,
-        uint256 borrowAmount,
-        address borrowToken
-    ) internal {
-        if (borrowToken == address(0)) {
-            require(address(this).balance >= borrowAmount, "Insufficient contract ZETA balance");
-            payable(msg.sender).transfer(borrowAmount);
-        } else {
-            revert("ERC20 borrowing not yet implemented");
-        }
-        
-        emit CrossChainMessageSent(positionId, block.chainid, "SAME_CHAIN_BORROW", address(this));
-    }
-    
-    function _calculateYieldRate(uint256 chainId, uint256 /* amount */) internal pure returns (uint256) {
-        uint256 baseRate = 500;
-        
-        if (chainId == 1) {
-            return baseRate + 200;
-        } else if (chainId == 137) {
-            return baseRate + 150;
-        } else if (chainId == 56) {
-            return baseRate + 100;
-        } else {
-            return baseRate;
->>>>>>> e5a1334bc76a366ca5fdc3e0ace3d0f84937306f
         }
     }
     
@@ -473,7 +308,6 @@ contract ZetaLendAI {
     ) internal {
         if (borrowToken == address(0)) {
             require(address(this).balance >= borrowAmount, "Insufficient contract ZETA balance");
-            
             (bool success, ) = payable(msg.sender).call{value: borrowAmount}("");
             require(success, "ZETA transfer failed");
         } else {
@@ -497,91 +331,6 @@ contract ZetaLendAI {
         }
     }
     
-    // ALL OTHER FUNCTIONS (same as before)...
-    function getLendingPosition(uint256 positionId) external view returns (LendingPosition memory) {
-        return lendingPositions[positionId];
-    }
-    
-    function getAIRiskAssessment(uint256 positionId) external view returns (AIRiskData memory) {
-        return aiRiskData[positionId];
-    }
-    
-    function getUserPositions(address user) external view returns (uint256[] memory) {
-        return userPositions[user];
-    }
-    
-    function isPositionHealthy(uint256 positionId) external view returns (bool) {
-        if (!lendingPositions[positionId].isActive || lendingPositions[positionId].collateralAmount == 0) {
-            return false;
-        }
-        
-        uint256 currentLTV = (lendingPositions[positionId].borrowedAmount * 100) / lendingPositions[positionId].collateralAmount;
-        uint256 liquidationProb = aiRiskData[positionId].liquidationProbability;
-        uint256 healthFactor = aiRiskData[positionId].healthFactor;
-        
-        return currentLTV <= lendingPositions[positionId].liquidationThreshold && 
-               liquidationProb <= 80 && 
-               healthFactor >= 110;
-    }
-    
-    function updateAIRiskAssessment(uint256 positionId, uint256 newRiskScore, uint256 newLiquidationProb) external {
-        require(lendingPositions[positionId].isActive, "Position not active");
-        require(newRiskScore <= 100, "Risk score must be <= 100");
-        require(newLiquidationProb <= 100, "Liquidation probability must be <= 100");
-        
-        require(
-            msg.sender == lendingPositions[positionId].user || 
-            msg.sender == admin ||
-            authorizedCallers[msg.sender], 
-            "Unauthorized"
-        );
-        
-        aiRiskData[positionId].riskScore = newRiskScore;
-        aiRiskData[positionId].liquidationProbability = newLiquidationProb;
-        aiRiskData[positionId].timestamp = block.timestamp;
-        aiRiskData[positionId].healthFactor = (lendingPositions[positionId].collateralAmount * 100) / lendingPositions[positionId].borrowedAmount;
-        
-        if (lendingPositions[positionId].borrowedAmount > 0) {
-            aiRiskData[positionId].healthFactor = (lendingPositions[positionId].collateralAmount * 100) / lendingPositions[positionId].borrowedAmount;
-        }
-        
-        emit AIRiskUpdate(positionId, newRiskScore, newLiquidationProb);
-    }
-    
-    function liquidatePositionAdvanced(uint256 positionId) external {
-        require(lendingPositions[positionId].isActive, "Position not active");
-        
-        uint256 currentLTV = (lendingPositions[positionId].borrowedAmount * 100) / lendingPositions[positionId].collateralAmount;
-        uint256 liquidationProb = aiRiskData[positionId].liquidationProbability;
-        uint256 healthFactor = aiRiskData[positionId].healthFactor;
-        
-        require(
-            currentLTV > lendingPositions[positionId].liquidationThreshold || 
-            liquidationProb > 80 ||
-            healthFactor < 110,
-            "Position is healthy - cannot liquidate"
-        );
-        
-        lendingPositions[positionId].isActive = false;
-        
-        if (lendingPositions[positionId].borrowChain != block.chainid) {
-            _sendLiquidationMessage(positionId);
-        }
-        
-        uint256[] memory affectedChains = new uint256[](1);
-        affectedChains[0] = lendingPositions[positionId].borrowChain;
-        
-        emit CrossChainLiquidation(positionId, msg.sender, lendingPositions[positionId].borrowedAmount, affectedChains);
-    }
-    
-<<<<<<< HEAD
-    function pause() external onlyAdmin {
-        paused = true;
-    }
-    
-    function unpause() external onlyAdmin {
-        paused = false;
-=======
     function _sendLiquidationMessage(uint256 positionId) internal {
         LendingPosition memory position = lendingPositions[positionId];
         
@@ -608,113 +357,21 @@ contract ZetaLendAI {
         emit CrossChainMessageSent(positionId, position.borrowChain, "LIQUIDATE", targetReceiver);
     }
     
-    function setReceiverContract(uint256 chainId, address receiver) external onlyAdmin {
-        require(receiver != address(0), "Invalid receiver address");
-        require(
-            chainId == 1 || chainId == 137 || chainId == 56, 
-            "Unsupported chain ID"
-        );
-        
-        receiverContracts[chainId] = receiver;
-        emit ReceiverContractSet(chainId, receiver);
-    }
-    
-    function setReceiverContracts(
-        uint256[] calldata chainIds,
-        address[] calldata receivers
-    ) external onlyAdmin {
-        require(chainIds.length == receivers.length, "Array length mismatch");
-        
-        for (uint256 i = 0; i < chainIds.length; i++) {
-            _setReceiverContract(chainIds[i], receivers[i]);
-        }
-    }
-    
-    function _setReceiverContract(uint256 chainId, address receiver) internal {
-        require(receiver != address(0), "Invalid receiver address");
-        require(
-            chainId == 1 || chainId == 137 || chainId == 56, 
-            "Unsupported chain ID"
-        );
-        
-        receiverContracts[chainId] = receiver;
-        emit ReceiverContractSet(chainId, receiver);
-    }
-    
-    function addSupportedChain(uint256 chainId, address tokenAddress) external onlyAdmin {
-        chainTokens[chainId] = tokenAddress;
->>>>>>> e5a1334bc76a366ca5fdc3e0ace3d0f84937306f
-    }
-    
-    function addAuthorizedCaller(address caller) external onlyAdmin {
-        require(caller != address(0), "Invalid caller address");
-        authorizedCallers[caller] = true;
-    }
-    
-    function removeAuthorizedCaller(address caller) external onlyAdmin {
-        authorizedCallers[caller] = false;
-<<<<<<< HEAD
-=======
-    }
-    
-    function pause() external onlyAdmin {
-        paused = true;
-    }
-    
-    function unpause() external onlyAdmin {
-        paused = false;
-    }
-    
-    function getLendingPosition(uint256 positionId) 
-        external 
-        view 
-        returns (LendingPosition memory) 
-    {
+    // View functions
+    function getLendingPosition(uint256 positionId) external view returns (LendingPosition memory) {
         return lendingPositions[positionId];
->>>>>>> e5a1334bc76a366ca5fdc3e0ace3d0f84937306f
     }
     
-    function emergencyWithdraw() external onlyAdmin {
-        uint256 balance = address(this).balance;
-        require(balance > 0, "No balance to withdraw");
-        
-<<<<<<< HEAD
-        (bool success, ) = payable(admin).call{value: balance}("");
-        require(success, "Emergency withdrawal failed");
+    function getAIRiskAssessment(uint256 positionId) external view returns (AIRiskData memory) {
+        return aiRiskData[positionId];
     }
     
-    receive() external payable {}
-    fallback() external payable {}
-}
-=======
-        chains[0] = 1;
-        chains[1] = 137;
-        chains[2] = 56;
-        
-        tokens[0] = chainTokens[1];
-        tokens[1] = chainTokens[137];
-        tokens[2] = chainTokens[56];
-    }
-    
-    function getReceiverContracts() external view returns (uint256[] memory chains, address[] memory receivers) {
-        chains = new uint256[](3);
-        receivers = new address[](3);
-        
-        chains[0] = 1;
-        chains[1] = 137;
-        chains[2] = 56;
-        
-        receivers[0] = receiverContracts[1];
-        receivers[1] = receiverContracts[137];
-        receivers[2] = receiverContracts[56];
-    }
-    
-    function getChainLiquidity(uint256 /* chainId */) external pure returns (uint256) {
-        return 1000 * 1e18;
+    function getUserPositions(address user) external view returns (uint256[] memory) {
+        return userPositions[user];
     }
     
     function isPositionHealthy(uint256 positionId) external view returns (bool) {
-        if (!lendingPositions[positionId].isActive) {
+        if (!lendingPositions[positionId].isActive || lendingPositions[positionId].collateralAmount == 0) {
             return false;
         }
         
@@ -752,6 +409,36 @@ contract ZetaLendAI {
         isHealthy = this.isPositionHealthy(positionId);
     }
     
+    function getChainTokens() external view returns (uint256[] memory chains, address[] memory tokens) {
+        chains = new uint256[](3);
+        tokens = new address[](3);
+        
+        chains[0] = 1;
+        chains[1] = 137;
+        chains[2] = 56;
+        
+        tokens[0] = chainTokens[1];
+        tokens[1] = chainTokens[137];
+        tokens[2] = chainTokens[56];
+    }
+    
+    function getReceiverContracts() external view returns (uint256[] memory chains, address[] memory receivers) {
+        chains = new uint256[](3);
+        receivers = new address[](3);
+        
+        chains[0] = 1;
+        chains[1] = 137;
+        chains[2] = 56;
+        
+        receivers[0] = receiverContracts[1];
+        receivers[1] = receiverContracts[137];
+        receivers[2] = receiverContracts[56];
+    }
+    
+    function getChainLiquidity(uint256) external pure returns (uint256) {
+        return 1000 * 1e18;
+    }
+    
     function getContractInfo() external view returns (
         address gatewayAddress,
         uint256 totalPositions,
@@ -766,10 +453,118 @@ contract ZetaLendAI {
         version = aiModelVersion;
     }
     
-    receive() external payable {}
+    // Admin functions
+    function updateAIRiskAssessment(uint256 positionId, uint256 newRiskScore, uint256 newLiquidationProb) external {
+        require(lendingPositions[positionId].isActive, "Position not active");
+        require(newRiskScore <= 100, "Risk score must be <= 100");
+        require(newLiquidationProb <= 100, "Liquidation probability must be <= 100");
+        
+        require(
+            msg.sender == lendingPositions[positionId].user || 
+            msg.sender == admin ||
+            authorizedCallers[msg.sender], 
+            "Unauthorized"
+        );
+        
+        aiRiskData[positionId].riskScore = newRiskScore;
+        aiRiskData[positionId].liquidationProbability = newLiquidationProb;
+        aiRiskData[positionId].timestamp = block.timestamp;
+        
+        if (lendingPositions[positionId].borrowedAmount > 0) {
+            aiRiskData[positionId].healthFactor = (lendingPositions[positionId].collateralAmount * 100) / lendingPositions[positionId].borrowedAmount;
+        }
+        
+        emit AIRiskUpdate(positionId, newRiskScore, newLiquidationProb);
+    }
+    
+    function liquidatePositionAdvanced(uint256 positionId) external {
+        require(lendingPositions[positionId].isActive, "Position not active");
+        
+        uint256 currentLTV = (lendingPositions[positionId].borrowedAmount * 100) / lendingPositions[positionId].collateralAmount;
+        uint256 liquidationProb = aiRiskData[positionId].liquidationProbability;
+        uint256 healthFactor = aiRiskData[positionId].healthFactor;
+        
+        require(
+            currentLTV > lendingPositions[positionId].liquidationThreshold || 
+            liquidationProb > 80 ||
+            healthFactor < 110,
+            "Position is healthy - cannot liquidate"
+        );
+        
+        lendingPositions[positionId].isActive = false;
+        
+        if (lendingPositions[positionId].borrowChain != block.chainid) {
+            _sendLiquidationMessage(positionId);
+        }
+        
+        uint256[] memory affectedChains = new uint256[](1);
+        affectedChains[0] = lendingPositions[positionId].borrowChain;
+        
+        emit CrossChainLiquidation(positionId, msg.sender, lendingPositions[positionId].borrowedAmount, affectedChains);
+    }
+    
+    function setReceiverContract(uint256 chainId, address receiver) external onlyAdmin {
+        require(receiver != address(0), "Invalid receiver address");
+        require(
+            chainId == 1 || chainId == 137 || chainId == 56, 
+            "Unsupported chain ID"
+        );
+        
+        receiverContracts[chainId] = receiver;
+        emit ReceiverContractSet(chainId, receiver);
+    }
+    
+    function setReceiverContracts(
+        uint256[] calldata chainIds,
+        address[] calldata receivers
+    ) external onlyAdmin {
+        require(chainIds.length == receivers.length, "Array length mismatch");
+        
+        for (uint256 i = 0; i < chainIds.length; i++) {
+            _setReceiverContract(chainIds[i], receivers[i]);
+        }
+    }
+    
+    function _setReceiverContract(uint256 chainId, address receiver) internal {
+        require(receiver != address(0), "Invalid receiver address");
+        require(
+            chainId == 1 || chainId == 137 || chainId == 56, 
+            "Unsupported chain ID"
+        );
+        
+        receiverContracts[chainId] = receiver;
+        emit ReceiverContractSet(chainId, receiver);
+    }
+    
+    function addSupportedChain(uint256 chainId, address tokenAddress) external onlyAdmin {
+        chainTokens[chainId] = tokenAddress;
+    }
+    
+    function addAuthorizedCaller(address caller) external onlyAdmin {
+        require(caller != address(0), "Invalid caller address");
+        authorizedCallers[caller] = true;
+    }
+    
+    function removeAuthorizedCaller(address caller) external onlyAdmin {
+        authorizedCallers[caller] = false;
+    }
+    
+    function pause() external onlyAdmin {
+        paused = true;
+    }
+    
+    function unpause() external onlyAdmin {
+        paused = false;
+    }
     
     function emergencyWithdraw() external onlyAdmin {
-        payable(admin).transfer(address(this).balance);
+        uint256 balance = address(this).balance;
+        require(balance > 0, "No balance to withdraw");
+        
+        (bool success, ) = payable(admin).call{value: balance}("");
+        require(success, "Emergency withdrawal failed");
     }
+    
+    receive() external payable {}
+    fallback() external payable {}
 }
->>>>>>> e5a1334bc76a366ca5fdc3e0ace3d0f84937306f

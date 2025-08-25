@@ -1,36 +1,30 @@
 export const CONTRACT_ADDRESSES = {
-<<<<<<< HEAD
+
     ZETA_LEND_AI: '0x4Cdf2668Fec5A48aB4CaB277353d1a1B073704a3', // Your real ZetaLend contract
-=======
-    ZETA_LEND_AI: '0x353e2e29af2864e83f7c7001cb3bf7a6e9105021', // Your real ZetaLend contract
->>>>>>> e5a1334bc76a366ca5fdc3e0ace3d0f84937306f
+
     ZETA_GATEWAY: process.env.REACT_APP_ZETA_GATEWAY_CONTRACT || '0xfEDD7A6e3Ef1cC470fbfbF955a22D793dDC0F44E',
     CROSS_CHAIN_CONNECTOR: '0xe7f1725e7734ce288f8367e1bb143e90bb3f0512',
     GATEWAY_ZEVM: '0xfEDD7A6e3Ef1cC470fbfbF955a22D793dDC0F44E',
 
     RECEIVERS: {
-<<<<<<< HEAD
+
         1: '0x0e53d4a9a4176e911cc38eac89e099c8343608ac',    // Ethereum
         137: '0xee21c8cc9d75558698c78ce19f6783bb0df1cb32',  // Polygon
         56: '0xd66fa7b4472a1eaa08ba217ef67a687c63655969'   // BSC
-=======
-        1: process.env.REACT_APP_ETH_RECEIVER_CONTRACT   || '0xa33ea38ca38b1dc5234d97dccb3e6898c2d3b242',   // Ethereum
-        137: process.env.REACT_APP_POLYGON_RECEIVER_CONTRACT || '0x6ee043f5039c1d3bac1b4d08f2351b265d209ad2',  // Polygon
-        56: process.env.REACT_APP_BSC_RECEIVER_CONTRACT  || '0xd66fa7b4472a1eaa08ba217ef67a687c63655969'   // BSC
->>>>>>> e5a1334bc76a366ca5fdc3e0ace3d0f84937306f
+
     }
 
 };
 
 export const ZETA_LEND_ABI = [
-    // ✅ MAIN LENDING FUNCTION (this was missing!)
+
     "function lendCrossChain(uint256 collateralAmount, uint256 borrowAmount, uint256 borrowChain, address borrowToken, bytes calldata aiRiskDataEncoded) external payable",
 
-    // ✅ ADMIN FUNCTIONS
+
     "function setReceiverContracts(uint256[] calldata chainIds, address[] calldata receivers) external",
     "function setReceiverContract(uint256 chainId, address receiver) external",
 
-    // ✅ VIEW FUNCTIONS
+
     "function receiverContracts(uint256) external view returns (address)",
     "function getReceiverContracts() external view returns (uint256[] memory chains, address[] memory receivers)",
     "function lendingPositions(uint256) external view returns (address user, uint256 collateralAmount, uint256 borrowedAmount, uint256 collateralChain, uint256 borrowChain, address collateralToken, address borrowToken, uint256 liquidationThreshold, uint256 timestamp, bool isActive, uint256 aiRiskScore, uint256 yieldRate)",
@@ -42,15 +36,15 @@ export const ZETA_LEND_ABI = [
     "function gateway() external view returns (address)",
     "function admin() external view returns (address)",
 
-    // ✅ RISK MANAGEMENT FUNCTIONS
+
     "function updateAIRiskAssessment(uint256 positionId, uint256 newRiskScore, uint256 newLiquidationProb) external",
     "function liquidatePositionAdvanced(uint256 positionId) external",
     "function isPositionHealthy(uint256 positionId) external view returns (bool)",
 
-    // ✅ UTILITY FUNCTIONS
+
     "function decodeAIRiskData(bytes calldata data) external pure returns (uint256 riskScore, uint256 recommendedLTV, uint256 liquidationProb, uint256 optimizedChain)",
 
-    // ✅ EVENTS
+
     "event CrossChainLend(address indexed user, uint256 indexed positionId, uint256 collateralChain, uint256 borrowChain, uint256 collateralAmount, uint256 borrowAmount)",
     "event CrossChainMessageSent(uint256 indexed positionId, uint256 targetChain, string messageType, address targetReceiver)",
     "event AIRiskUpdate(uint256 indexed positionId, uint256 riskScore, uint256 liquidationProbability)",
@@ -77,7 +71,7 @@ export const CHAIN_CONFIG = {
             decimals: 18,
         },
         networkParams: {
-            chainId: '0x1B59', // 7001 in hex
+            chainId: '0x1B59',
             chainName: 'ZetaChain Athens Testnet',
             nativeCurrency: {
                 name: 'ZETA',
@@ -123,7 +117,7 @@ export const CHAIN_CONFIG = {
     },
 };
 
-// ✅ ENHANCED: RPC testing with better error handling
+
 export async function getWorkingRpcUrl(): Promise<string> {
     const { ethers } = await import('ethers');
 
@@ -159,7 +153,7 @@ export async function getWorkingRpcUrl(): Promise<string> {
     return CHAIN_CONFIG.ZETA_TESTNET.rpc;
 }
 
-// ✅ ENHANCED: Utility functions for contract interaction
+
 export const CONTRACT_HELPERS = {
     // Encode AI risk data for contract
     encodeAIRiskData: (riskScore: number, recommendedLTV: number, liquidationProb: number, optimizedChain: number) => {
@@ -258,7 +252,7 @@ export const PROTOCOL_INFO = {
 export const AI_CONFIG = {
     backend_url: process.env.REACT_APP_AI_BACKEND_URL || 'http://localhost:8000',
     gemini_api_key: process.env.REACT_APP_GEMINI_API_KEY,
-    model: 'gemini-1.5-flash', // ✅ Updated to latest model
+    model: 'gemini-1.5-flash',
     risk_threshold: {
         low: 30,
         medium: 60,
@@ -284,7 +278,7 @@ export const AI_CONFIG = {
     }
 };
 
-// Legacy API Base URL for backward compatibility
+
 export const API_BASE_URL = AI_CONFIG.backend_url;
 
 export const SUPPORTED_TOKENS = {
@@ -341,14 +335,14 @@ export const CROSS_CHAIN_TOKENS = {
     ],
 };
 
-// ✅ VALIDATION HELPERS
+
 export const VALIDATION = {
     MIN_COLLATERAL: 0.001,
     MAX_COLLATERAL: 1000,
     MIN_LTV: 10,
     MAX_LTV: 85,
-    MAX_RISK_SCORE: 85, // ✅ UPDATED: Increased from 75 to 85
-    MAX_LIQUIDATION_PROB: 50, // ✅ ADDED: Match contract limit
+    MAX_RISK_SCORE: 85, //  Increased from 75 to 85
+    MAX_LIQUIDATION_PROB: 50, //  Match contract limit
 
     validateAmount: (amount: string): { isValid: boolean; error?: string } => {
         const num = parseFloat(amount);
@@ -374,7 +368,7 @@ export const VALIDATION = {
         return { isValid: true };
     },
 
-    // ✅ ADDED: Validate AI parameters
+    // Validate AI parameters
     validateAIRisk: (riskScore: number, liquidationProb: number): { isValid: boolean; error?: string } => {
         if (riskScore > VALIDATION.MAX_RISK_SCORE) {
             return { isValid: false, error: `Risk score cannot exceed ${VALIDATION.MAX_RISK_SCORE}` };
