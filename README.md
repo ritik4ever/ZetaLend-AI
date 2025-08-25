@@ -210,17 +210,6 @@ The platform integrates Google Gemini AI for:
 4. Push to the branch (`git push origin feature/amazing-feature`)
 5. Open a Pull Request
 
-## License
-
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
-
-## Support
-
-- **Documentation**: [docs.zetalend.ai](https://docs.zetalend.ai)
-- **Discord**: [Join our community](https://discord.gg/zetalend)
-- **Twitter**: [@ZetaLendAI](https://twitter.com/ZetaLendAI)
-- **Email**: support@zetalend.ai
-
 ## Roadmap
 
 - [ ] Mainnet deployment
