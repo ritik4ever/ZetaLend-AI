@@ -9,7 +9,6 @@ const PORT = process.env.PORT || 3001;
 // Contract configuration
 const CONTRACT_CONFIG = {
     zetaLendAI: "0x4Cdf2668Fec5A48aB4CaB277353d1a1B073704a3",
-
     gateway: "0xfEDD7A6e3Ef1cC470fbfbF955a22D793dDC0F44E",
     network: "zetachain_testnet",
     chainId: 7001,
@@ -143,7 +142,7 @@ app.post('/api/ai/monitor-positions', (req, res) => {
     });
 });
 
-// 🤖 AI FEATURE: Automated risk monitoring
+// AI FEATURE: Automated risk monitoring
 cron.schedule('*/5 * * * *', async () => {
     console.log('Running automated risk assessment...');
     try {
@@ -162,11 +161,7 @@ app.use((err, req, res, next) => {
 
 // 404 handler
 app.use('*', (req, res) => {
-<<<<<<< HEAD
     res.status(404).json({
-=======
-    res.status(404).json({
->>>>>>> e5a1334bc76a366ca5fdc3e0ace3d0f84937306f
         error: 'Endpoint not found',
         path: req.originalUrl,
         message: 'The requested endpoint does not exist'
