@@ -36,7 +36,7 @@ const SUPPORTED_TOKENS = {
 
 interface CrossChainLendingProps {
     userAddress?: string | null;
-    onTransactionCreated?: (transaction: any) => void; // Add callback prop
+    onTransactionCreated?: (transaction: any) => void;
 }
 
 interface LendingForm {
@@ -106,10 +106,7 @@ const CrossChainLendingInterface: React.FC<CrossChainLendingProps> = ({
                 }
             };
 
-<<<<<<< HEAD
-=======
-            //  REAL AI INTEGRATION - Using enhanced AI service
->>>>>>> e5a1334bc76a366ca5fdc3e0ace3d0f84937306f
+            // REAL AI INTEGRATION - Using enhanced AI service
             const riskAssessment = await aiService.assessRisk(positionData);
 
             setAiRiskData({
@@ -155,10 +152,7 @@ const CrossChainLendingInterface: React.FC<CrossChainLendingProps> = ({
         return (parseFloat(formData.borrowAmount) / parseFloat(formData.collateralAmount)) * 100;
     };
 
-<<<<<<< HEAD
-=======
-    //   Using the working walletService instead of missing zetaChainService
->>>>>>> e5a1334bc76a366ca5fdc3e0ace3d0f84937306f
+    // Using the working walletService instead of missing zetaChainService
     const handleCreatePosition = async () => {
         if (!userAddress) {
             alert('Please connect your wallet first');
@@ -167,11 +161,7 @@ const CrossChainLendingInterface: React.FC<CrossChainLendingProps> = ({
 
         setLoading(true);
         try {
-<<<<<<< HEAD
-            // Input validation
-=======
-            //   Input validation with new limits
->>>>>>> e5a1334bc76a366ca5fdc3e0ace3d0f84937306f
+            // Input validation with new limits
             if (!formData.collateralAmount || !formData.borrowAmount) {
                 throw new Error('Please enter both collateral and borrow amounts');
             }
@@ -192,11 +182,7 @@ const CrossChainLendingInterface: React.FC<CrossChainLendingProps> = ({
                 throw new Error(`LTV (${currentLTV.toFixed(1)}%) exceeds maximum (${formData.maxLTV}%)`);
             }
 
-<<<<<<< HEAD
-            // Validate AI risk parameters
-=======
-            //  Validate AI risk parameters against contract limits
->>>>>>> e5a1334bc76a366ca5fdc3e0ace3d0f84937306f
+            // Validate AI risk parameters against contract limits
             if (aiRiskData) {
                 if (aiRiskData.riskScore > 85) {
                     throw new Error(`AI risk score (${aiRiskData.riskScore}) exceeds contract limit (85). Reduce borrow amount.`);
@@ -254,10 +240,7 @@ const CrossChainLendingInterface: React.FC<CrossChainLendingProps> = ({
 
             console.log('🚀 Creating REAL blockchain transaction...');
 
-<<<<<<< HEAD
-=======
             // Use the updated wallet service
->>>>>>> e5a1334bc76a366ca5fdc3e0ace3d0f84937306f
             const result = await walletService.createLendingPosition(
                 formData.collateralAmount,
                 formData.borrowAmount,
@@ -443,77 +426,6 @@ ${result.gasUsed && result.gasUsed !== 'Unknown (RPC delay)' ? `- Gas Used: ${re
                                     placeholder="1.0"
                                     value={formData.collateralAmount}
                                     onChange={(e) => setFormData({ ...formData, collateralAmount: e.target.value })}
-                                    className="w-full p-4 border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                                    min="0"
-                                    step="0.01"
-                                />
-                            </div>
-                        </div>
-                    </div>
-
-                    {/* Divider */}
-                    <div className="relative mb-8">
-                        <div className="absolute inset-0 flex items-center">
-                            <div className="w-full border-t border-gray-200"></div>
-                        </div>
-                        <div className="relative flex justify-center">
-                            <span className="px-4 bg-white text-sm text-gray-500">Borrow</span>
-                        </div>
-                    </div>
-
-                    {/* Borrow Section */}
-                    <div className="space-y-6 mb-8">
-                        <div>
-                            <label className="block text-sm font-medium text-gray-700 mb-3">
-                                Borrow Chain
-                            </label>
-                            <select
-                                value={formData.borrowChain}
-                                onChange={(e) => {
-                                    const newChain = parseInt(e.target.value);
-                                    setFormData({
-                                        ...formData,
-                                        borrowChain: newChain,
-                                        borrowToken: SUPPORTED_TOKENS[newChain as keyof typeof SUPPORTED_TOKENS]?.[0]?.symbol || 'USDC'
-                                    });
-                                }}
-                                className="w-full p-4 border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-white"
-                            >
-                                {Object.entries(SUPPORTED_CHAINS).map(([chainId, chain]) => (
-                                    <option key={chainId} value={chainId}>
-                                        {chain.name} ({chain.symbol})
-                                    </option>
-                                ))}
-                            </select>
-                        </div>
-
-                        <div className="grid grid-cols-2 gap-4">
-                            <div>
-                                <label className="block text-sm font-medium text-gray-700 mb-3">
-                                    Token
-                                </label>
-                                <select
-                                    value={formData.borrowToken}
-                                    onChange={(e) => setFormData({ ...formData, borrowToken: e.target.value })}
-                                    className="w-full p-4 border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-white"
-                                >
-                                    {SUPPORTED_TOKENS[formData.borrowChain as keyof typeof SUPPORTED_TOKENS]?.map((token) => (
-                                        <option key={token.symbol} value={token.symbol}>
-                                            {token.symbol}
-                                        </option>
-                                    ))}
-                                </select>
-                            </div>
-
-                            <div>
-                                <label className="block text-sm font-medium text-gray-700 mb-3">
-                                    Amount
-                                </label>
-                                <input
-                                    type="number"
-                                    placeholder="0.75"
-                                    value={formData.borrowAmount}
-                                    onChange={(e) => setFormData({ ...formData, borrowAmount: e.target.value })}
                                     className="w-full p-4 border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                                     min="0"
                                     step="0.01"
@@ -730,5 +642,75 @@ ${result.gasUsed && result.gasUsed !== 'Unknown (RPC delay)' ? `- Gas Used: ${re
     );
 };
 
-
 export default CrossChainLendingInterface;
+                    </div>
+
+                    {/* Divider */}
+                    <div className="relative mb-8">
+                        <div className="absolute inset-0 flex items-center">
+                            <div className="w-full border-t border-gray-200"></div>
+                        </div>
+                        <div className="relative flex justify-center">
+                            <span className="px-4 bg-white text-sm text-gray-500">Borrow</span>
+                        </div>
+                    </div>
+
+                    {/* Borrow Section */}
+                    <div className="space-y-6 mb-8">
+                        <div>
+                            <label className="block text-sm font-medium text-gray-700 mb-3">
+                                Borrow Chain
+                            </label>
+                            <select
+                                value={formData.borrowChain}
+                                onChange={(e) => {
+                                    const newChain = parseInt(e.target.value);
+                                    setFormData({
+                                        ...formData,
+                                        borrowChain: newChain,
+                                        borrowToken: SUPPORTED_TOKENS[newChain as keyof typeof SUPPORTED_TOKENS]?.[0]?.symbol || 'USDC'
+                                    });
+                                }}
+                                className="w-full p-4 border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-white"
+                            >
+                                {Object.entries(SUPPORTED_CHAINS).map(([chainId, chain]) => (
+                                    <option key={chainId} value={chainId}>
+                                        {chain.name} ({chain.symbol})
+                                    </option>
+                                ))}
+                            </select>
+                        </div>
+
+                        <div className="grid grid-cols-2 gap-4">
+                            <div>
+                                <label className="block text-sm font-medium text-gray-700 mb-3">
+                                    Token
+                                </label>
+                                <select
+                                    value={formData.borrowToken}
+                                    onChange={(e) => setFormData({ ...formData, borrowToken: e.target.value })}
+                                    className="w-full p-4 border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-white"
+                                >
+                                    {SUPPORTED_TOKENS[formData.borrowChain as keyof typeof SUPPORTED_TOKENS]?.map((token) => (
+                                        <option key={token.symbol} value={token.symbol}>
+                                            {token.symbol}
+                                        </option>
+                                    ))}
+                                </select>
+                            </div>
+
+                            <div>
+                                <label className="block text-sm font-medium text-gray-700 mb-3">
+                                    Amount
+                                </label>
+                                <input
+                                    type="number"
+                                    placeholder="0.75"
+                                    value={formData.borrowAmount}
+                                    onChange={(e) => setFormData({ ...formData, borrowAmount: e.target.value })}
+                                    className="w-full p-4 border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                                    min="0"
+                                    step="0.01"
+                                />
+                            </div>
+                        </div>
