@@ -1,9 +1,8 @@
 import axios from 'axios';
-// import { AI_CONFIG } from '../utils/constants';
-const API_URL = process.env.REACT_APP_BACKEND_URL || "http://localhost:3001";
+import { AI_CONFIG } from '../utils/constants';
 
 const api = axios.create({
-    baseURL: API_URL,
+    baseURL: AI_CONFIG.backend_url,
     timeout: 10000,
     headers: {
         'Content-Type': 'application/json',

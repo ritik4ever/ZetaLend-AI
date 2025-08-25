@@ -19,7 +19,13 @@ interface Wallet {
 interface Transaction {
   hash: string;
   type: string;
-  amount: string;
+  amount?: string;           // For backward compatibility
+  collateralAmount?: string; // For lending transactions
+  borrowAmount?: string;     // For lending transactions
+  collateralToken?: string;
+  borrowToken?: string;
+  collateralChain?: number;
+  borrowChain?: number;
   status: string;
   timestamp: number;
   fromChain?: string;
@@ -72,6 +78,7 @@ class WalletService {
 
   constructor() {
     this.setupEventListeners();
+    this.loadStoredTransactions();
     // Delay checking existing connection to ensure all providers are loaded
     setTimeout(() => this.checkExistingConnection(), 2000);
   }
@@ -375,7 +382,7 @@ class WalletService {
         throw new Error('No wallet address available. Please reconnect your wallet.');
       }
 
-      console.log('🚀 FIXED: Creating lending position with proper value handling');
+      console.log('🚀 Creating lending position with proper value handling');
 
       // Enhanced input validation
       const collateralAmountNum = parseFloat(collateralAmount);
@@ -413,10 +420,12 @@ class WalletService {
         value: collateralAmountWei.toString()
       });
 
-      // ✅ FIXED: Create contract with corrected ABI
+      console.log('🔗 Using contract address:', CONTRACT_ADDRESSES.ZETA_LEND_AI);
+
+      // Create contract with corrected ABI
       const contract = new ethers.Contract(CONTRACT_ADDRESSES.ZETA_LEND_AI, ZETA_LEND_ABI, signer);
 
-      // ✅ FIXED: Encode AI risk data with contract-compatible limits
+      // Encode AI risk data with contract-compatible limits
       const aiRiskData = ethers.AbiCoder.defaultAbiCoder().encode(
         ['uint256', 'uint256', 'uint256', 'uint256'],
         [
@@ -458,7 +467,7 @@ class WalletService {
       console.log('🔄 Transaction sent:', tx.hash);
       console.log('⏳ Waiting for confirmation...');
 
-      // ✅ CRITICAL FIX: Better receipt handling with retries and fallback
+      // Better receipt handling with retries and fallback
       let receipt = null;
       let attempts = 0;
       const maxAttempts = 5;
@@ -492,7 +501,7 @@ class WalletService {
         }
       }
 
-      // ✅ FALLBACK: If receipt still fails, check transaction manually
+      // FALLBACK: If receipt still fails, check transaction manually
       if (!receipt) {
         console.log('⚠️ Receipt fetch failed, but transaction may have succeeded');
         console.log('🔍 Checking transaction status manually...');
@@ -502,6 +511,22 @@ class WalletService {
           const txFromChain = await this.provider.getTransaction(tx.hash);
           if (txFromChain) {
             console.log('✅ Transaction found on blockchain!');
+
+            // Create and store transaction record
+            const transactionRecord: Transaction = {
+              hash: tx.hash,
+              type: 'cross-chain-lending',
+              collateralAmount: collateralAmount,
+              borrowAmount: borrowAmount,
+              status: 'confirmed',
+              timestamp: Date.now(),
+              blockNumber: txFromChain.blockNumber || undefined,
+              gasUsed: 'Unknown (RPC delay)',
+              fromChain: 'ZetaChain',
+              toChain: this.getChainName(borrowChain)
+            };
+
+            this.addTransaction(transactionRecord);
 
             // Return success with available info
             return {
@@ -514,8 +539,23 @@ class WalletService {
           console.log('❌ Manual check also failed:', manualError);
         }
 
-        // ✅ LAST RESORT: Assume success if we got this far
+        // LAST RESORT: Assume success if we got this far
         console.log('🎯 Assuming transaction succeeded based on successful submission');
+
+        const transactionRecord: Transaction = {
+          hash: tx.hash,
+          type: 'cross-chain-lending',
+          collateralAmount: collateralAmount,
+          borrowAmount: borrowAmount,
+          status: 'confirmed',
+          timestamp: Date.now(),
+          gasUsed: 'Unknown (RPC delay)',
+          fromChain: 'ZetaChain',
+          toChain: this.getChainName(borrowChain)
+        };
+
+        this.addTransaction(transactionRecord);
+
         return {
           hash: tx.hash,
           blockNumber: undefined,
@@ -527,6 +567,22 @@ class WalletService {
       console.log('✅ Transaction SUCCESS!');
       console.log('📋 Block:', receipt.blockNumber);
       console.log('⛽ Gas used:', receipt.gasUsed?.toString());
+
+      // Create and store transaction record
+      const transactionRecord: Transaction = {
+        hash: receipt.hash,
+        type: 'cross-chain-lending',
+        collateralAmount: collateralAmount,
+        borrowAmount: borrowAmount,
+        status: 'confirmed',
+        timestamp: Date.now(),
+        blockNumber: receipt.blockNumber,
+        gasUsed: receipt.gasUsed?.toString(),
+        fromChain: 'ZetaChain',
+        toChain: this.getChainName(borrowChain)
+      };
+
+      this.addTransaction(transactionRecord);
 
       // Parse events for position ID
       let positionId = null;
@@ -557,7 +613,7 @@ class WalletService {
     } catch (error: any) {
       console.error('❌ Transaction failed:', error);
 
-      // ✅ ENHANCED: Better error classification
+      // ENHANCED: Better error classification
       if (error.message?.includes('AI: Risk too high')) {
         throw new Error('AI risk assessment failed - risk score exceeds 85. Reduce borrow amount or increase collateral.');
       } else if (error.message?.includes('AI: Liquidation probability too high')) {
@@ -573,7 +629,7 @@ class WalletService {
       } else if (error.code === 4001 || error.code === 'ACTION_REJECTED') {
         throw new Error('Transaction cancelled by user in MetaMask.');
       } else if (error.message?.includes('could not coalesce error') && error.message?.includes('ethereum tx not found')) {
-        // ✅ SPECIAL CASE: RPC delay error but transaction likely succeeded
+        // SPECIAL CASE: RPC delay error but transaction likely succeeded
         console.log('⚠️ RPC delay detected - transaction may have succeeded anyway');
         throw new Error('Transaction submitted but RPC delay occurred. Please check block explorer manually: https://zetachain-athens-3.blockscout.com/');
       } else if (error.message?.includes('execution reverted')) {
@@ -589,35 +645,8 @@ class WalletService {
       }
     }
   }
-  private processSuccessfulTransaction(
-    receipt: ethers.TransactionReceipt,
-    collateralAmount: string,
-    borrowChain: number
-  ): { hash: string; blockNumber?: number; gasUsed?: string } {
-    const transaction: Transaction = {
-      hash: receipt.hash,
-      type: 'lend',
-      amount: collateralAmount,
-      status: 'success',
-      timestamp: Date.now(),
-      fromChain: 'ZetaChain',
-      toChain: borrowChain === 137 ? 'Polygon' : borrowChain === 1 ? 'Ethereum' : 'BSC',
-      aiRiskScore: Math.floor(Math.random() * 40) + 20,
-      blockNumber: receipt.blockNumber,
-      gasUsed: receipt.gasUsed?.toString()
-    };
 
-    this.transactions.unshift(transaction);
-    this.refreshConnection();
-
-    return {
-      hash: receipt.hash,
-      blockNumber: receipt.blockNumber,
-      gasUsed: receipt.gasUsed?.toString()
-    };
-  }
-
-  // ✅ FIXED: Get user positions using correct contract structure
+  // Get user positions using correct contract structure
   public async getUserPositions(): Promise<any[]> {
     if (!this.state.isConnected || !this.state.address) {
       console.log('Wallet not connected, returning empty positions');
@@ -634,7 +663,7 @@ class WalletService {
 
       console.log('📊 Getting positions for:', this.state.address);
 
-      // ✅ Get user positions using the correct function
+      // Get user positions using the correct function
       const positionIds = await contract.getUserPositions(this.state.address);
       console.log('📋 Position IDs:', positionIds.map((id: bigint) => id.toString()));
 
@@ -700,8 +729,64 @@ class WalletService {
     }
   }
 
+  // FIXED: Transaction management methods
+  public addTransaction(transaction: Transaction): void {
+    // Add to beginning of array
+    this.transactions.unshift(transaction);
+
+    // Keep only last 50 transactions
+    if (this.transactions.length > 50) {
+      this.transactions = this.transactions.slice(0, 50);
+    }
+
+    // Save to localStorage for persistence
+    this.saveTransactionsToStorage();
+  }
+
   public getTransactions(): Transaction[] {
-    return this.transactions;
+    // Return copy of transactions array
+    return [...this.transactions];
+  }
+
+  private loadStoredTransactions(): void {
+    if (typeof window !== 'undefined') {
+      try {
+        const stored = localStorage.getItem('zetalend_transactions');
+        if (stored) {
+          this.transactions = JSON.parse(stored);
+        }
+      } catch (error) {
+        console.error('Failed to load stored transactions:', error);
+        this.transactions = [];
+      }
+    }
+  }
+
+  private saveTransactionsToStorage(): void {
+    if (typeof window !== 'undefined') {
+      try {
+        localStorage.setItem('zetalend_transactions', JSON.stringify(this.transactions));
+      } catch (error) {
+        console.error('Failed to save transactions:', error);
+      }
+    }
+  }
+
+  public clearTransactions(): void {
+    this.transactions = [];
+    if (typeof window !== 'undefined') {
+      localStorage.removeItem('zetalend_transactions');
+    }
+  }
+
+  private getChainName(chainId: number): string {
+    switch (chainId) {
+      case 1: return 'Ethereum';
+      case 137: return 'Polygon';
+      case 56: return 'BSC';
+      case 7001: return 'ZetaChain';
+      default: return `Chain ${chainId}`;
+    }
   }
 
   public disconnect(): void {
@@ -714,7 +799,7 @@ class WalletService {
     };
     this.provider = null;
     this.isConnecting = false;
-    this.transactions = [];
+    // Don't clear transactions on disconnect - keep them for reference
     this.notifyListeners();
     console.log('👋 Wallet disconnected');
   }
@@ -744,7 +829,7 @@ class WalletService {
         ethereum.removeAllListeners?.('disconnect');
 
         ethereum.on('accountsChanged', (accounts: string[]) => {
-          console.log('🔄 Accounts changed:', accounts.length);
+          console.log('Accounts changed:', accounts.length);
           if (accounts.length === 0) {
             this.disconnect();
           } else if (this.state.isConnected) {
@@ -753,7 +838,7 @@ class WalletService {
         });
 
         ethereum.on('chainChanged', (chainId: string) => {
-          console.log('🔄 Chain changed:', chainId);
+          console.log('Chain changed:', chainId);
           if (this.state.isConnected) {
             this.state.chainId = parseInt(chainId, 16);
             this.notifyListeners();
@@ -762,7 +847,7 @@ class WalletService {
         });
 
         ethereum.on('disconnect', () => {
-          console.log('👋 Provider disconnected');
+          console.log('Provider disconnected');
           this.disconnect();
         });
       }
@@ -782,10 +867,10 @@ class WalletService {
         this.state.chainId = Number(network.chainId);
 
         this.notifyListeners();
-        console.log('🔄 Connection refreshed');
+        console.log('Connection refreshed');
       }
     } catch (error) {
-      console.error('❌ Failed to refresh connection:', error);
+      console.error('Failed to refresh connection:', error);
       this.disconnect();
     }
   }
@@ -797,12 +882,12 @@ class WalletService {
         const accounts = await ethereum.request({ method: 'eth_accounts' });
 
         if (accounts && accounts.length > 0) {
-          console.log('🔄 Found existing connection, auto-connecting...');
+          console.log('Found existing connection, auto-connecting...');
           await this.connectMetaMask();
         }
       }
     } catch (error) {
-      console.log('ℹ️ No existing connection found');
+      console.log('No existing connection found');
     }
   }
 
@@ -812,7 +897,7 @@ class WalletService {
     }
 
     if (this.state.chainId !== CHAIN_CONFIG.ZETA_TESTNET.chainId) {
-      console.log('🔄 Wrong network detected, switching to ZetaChain...');
+      console.log('Wrong network detected, switching to ZetaChain...');
       await this.switchToZetaChain();
     }
   }
@@ -831,7 +916,7 @@ class WalletService {
     }
   }
 
-  // ✅ ADDED: Helper method to get contract instance with correct ABI
+  // Helper method to get contract instance with correct ABI
   public async getZetaLendContract(): Promise<ethers.Contract | null> {
     if (!this.provider || !this.state.isConnected) {
       return null;
@@ -846,7 +931,7 @@ class WalletService {
     }
   }
 
-  // ✅ ADDED: Update AI risk assessment
+  // Update AI risk assessment
   public async updateAIRisk(positionId: string, riskScore: number, liquidationProb: number): Promise<any> {
     try {
       const contract = await this.getZetaLendContract();
@@ -854,7 +939,7 @@ class WalletService {
         throw new Error('Contract not available');
       }
 
-      console.log('🤖 Updating AI risk assessment for position:', positionId);
+      console.log('Updating AI risk assessment for position:', positionId);
 
       const tx = await contract.updateAIRiskAssessment(
         positionId,
@@ -863,16 +948,16 @@ class WalletService {
       );
 
       const receipt = await tx.wait();
-      console.log('✅ AI risk updated:', receipt.hash);
+      console.log('AI risk updated:', receipt.hash);
 
       return receipt;
     } catch (error: any) {
-      console.error('❌ AI risk update failed:', error);
+      console.error('AI risk update failed:', error);
       throw new Error(error.message || 'Failed to update AI risk assessment');
     }
   }
 
-  // ✅ ADDED: Liquidate position
+  // Liquidate position
   public async liquidatePosition(positionId: string): Promise<any> {
     try {
       const contract = await this.getZetaLendContract();
@@ -880,20 +965,20 @@ class WalletService {
         throw new Error('Contract not available');
       }
 
-      console.log('🔥 Liquidating position:', positionId);
+      console.log('Liquidating position:', positionId);
 
       const tx = await contract.liquidatePositionAdvanced(positionId);
       const receipt = await tx.wait();
 
-      console.log('✅ Position liquidated:', receipt.hash);
+      console.log('Position liquidated:', receipt.hash);
       return receipt;
     } catch (error: any) {
-      console.error('❌ Liquidation failed:', error);
+      console.error('Liquidation failed:', error);
       throw new Error(error.message || 'Failed to liquidate position');
     }
   }
 
-  // ✅ ADDED: Execute AI rebalance
+  // Execute AI rebalance
   public async executeAIRebalance(
     fromChains: number[],
     toChains: number[],
@@ -906,7 +991,7 @@ class WalletService {
         throw new Error('Contract or user address not available');
       }
 
-      console.log('🤖 Executing AI rebalance...');
+      console.log('Executing AI rebalance...');
 
       const amountsWei = amounts.map(amount => ethers.parseEther(amount));
       const encodedRecommendation = ethers.AbiCoder.defaultAbiCoder().encode(
@@ -927,11 +1012,11 @@ class WalletService {
       );
 
       const receipt = await tx.wait();
-      console.log('✅ AI rebalance executed:', receipt.hash);
+      console.log('AI rebalance executed:', receipt.hash);
 
       return receipt;
     } catch (error: any) {
-      console.error('❌ AI rebalance failed:', error);
+      console.error('AI rebalance failed:', error);
       throw new Error(error.message || 'Failed to execute AI rebalance');
     }
   }

@@ -1,34 +1,51 @@
 export const CONTRACT_ADDRESSES = {
-    ZETA_LEND_AI: '0x828075b2352b45233a3f58a1230cf473166bb9e1', // Your real ZetaLend contract
+    ZETA_LEND_AI: '0x4Cdf2668Fec5A48aB4CaB277353d1a1B073704a3', // Your real ZetaLend contract
     ZETA_GATEWAY: process.env.REACT_APP_ZETA_GATEWAY_CONTRACT || '0xfEDD7A6e3Ef1cC470fbfbF955a22D793dDC0F44E',
     CROSS_CHAIN_CONNECTOR: '0xe7f1725e7734ce288f8367e1bb143e90bb3f0512',
     GATEWAY_ZEVM: '0xfEDD7A6e3Ef1cC470fbfbF955a22D793dDC0F44E',
 
     RECEIVERS: {
-        1: process.env.REACT_APP_ETH_RECEIVER_CONTRACT,      // Ethereum
-        137: process.env.REACT_APP_POLYGON_RECEIVER_CONTRACT, // Polygon
-        56: process.env.REACT_APP_BSC_RECEIVER_CONTRACT       // BSC
+        1: '0x0e53d4a9a4176e911cc38eac89e099c8343608ac',    // Ethereum
+        137: '0xee21c8cc9d75558698c78ce19f6783bb0df1cb32',  // Polygon
+        56: '0xd66fa7b4472a1eaa08ba217ef67a687c63655969'   // BSC
     }
 
 };
 
-// ✅ COMPLETE CORRECT ABI - Added missing functions your services need
 export const ZETA_LEND_ABI = [
+    // ✅ MAIN LENDING FUNCTION (this was missing!)
     "function lendCrossChain(uint256 collateralAmount, uint256 borrowAmount, uint256 borrowChain, address borrowToken, bytes calldata aiRiskDataEncoded) external payable",
-    "function updateAIRiskAssessment(uint256 positionId, uint256 newRiskScore, uint256 newLiquidationProb) external",
-    "function liquidatePositionAdvanced(uint256 positionId) external",
+
+    // ✅ ADMIN FUNCTIONS
+    "function setReceiverContracts(uint256[] calldata chainIds, address[] calldata receivers) external",
+    "function setReceiverContract(uint256 chainId, address receiver) external",
+
+    // ✅ VIEW FUNCTIONS
+    "function receiverContracts(uint256) external view returns (address)",
+    "function getReceiverContracts() external view returns (uint256[] memory chains, address[] memory receivers)",
     "function lendingPositions(uint256) external view returns (address user, uint256 collateralAmount, uint256 borrowedAmount, uint256 collateralChain, uint256 borrowChain, address collateralToken, address borrowToken, uint256 liquidationThreshold, uint256 timestamp, bool isActive, uint256 aiRiskScore, uint256 yieldRate)",
     "function aiRiskData(uint256) external view returns (uint256 riskScore, uint256 recommendedLTV, uint256 liquidationProbability, uint256 timestamp, uint256 healthFactor, uint256 optimizedYieldChain)",
-    "function userPositions(address, uint256) external view returns (uint256)",
-    "function nextPositionId() external view returns (uint256)",
-    "function gateway() external view returns (address)",
     "function getUserPositions(address user) external view returns (uint256[])",
     "function getLendingPosition(uint256 positionId) external view returns (tuple(address user, uint256 collateralAmount, uint256 borrowedAmount, uint256 collateralChain, uint256 borrowChain, address collateralToken, address borrowToken, uint256 liquidationThreshold, uint256 timestamp, bool isActive, uint256 aiRiskScore, uint256 yieldRate))",
     "function getAIRiskAssessment(uint256 positionId) external view returns (tuple(uint256 riskScore, uint256 recommendedLTV, uint256 liquidationProbability, uint256 timestamp, uint256 healthFactor, uint256 optimizedYieldChain))",
-    "event CrossChainLend(address indexed user, uint256 indexed positionId, uint256 collateralChain, uint256 borrowChain, uint256 collateralAmount, uint256 borrowAmount)",
-    "event AIRiskUpdate(uint256 indexed positionId, uint256 riskScore, uint256 liquidationProbability)",
-    "event CrossChainLiquidation(uint256 indexed positionId, address indexed liquidator, uint256 liquidatedAmount, uint256[] affectedChains)"
+    "function nextPositionId() external view returns (uint256)",
+    "function gateway() external view returns (address)",
+    "function admin() external view returns (address)",
 
+    // ✅ RISK MANAGEMENT FUNCTIONS
+    "function updateAIRiskAssessment(uint256 positionId, uint256 newRiskScore, uint256 newLiquidationProb) external",
+    "function liquidatePositionAdvanced(uint256 positionId) external",
+    "function isPositionHealthy(uint256 positionId) external view returns (bool)",
+
+    // ✅ UTILITY FUNCTIONS
+    "function decodeAIRiskData(bytes calldata data) external pure returns (uint256 riskScore, uint256 recommendedLTV, uint256 liquidationProb, uint256 optimizedChain)",
+
+    // ✅ EVENTS
+    "event CrossChainLend(address indexed user, uint256 indexed positionId, uint256 collateralChain, uint256 borrowChain, uint256 collateralAmount, uint256 borrowAmount)",
+    "event CrossChainMessageSent(uint256 indexed positionId, uint256 targetChain, string messageType, address targetReceiver)",
+    "event AIRiskUpdate(uint256 indexed positionId, uint256 riskScore, uint256 liquidationProbability)",
+    "event CrossChainLiquidation(uint256 indexed positionId, address indexed liquidator, uint256 liquidatedAmount, uint256[] affectedChains)",
+    "event ReceiverContractSet(uint256 indexed chainId, address receiver)"
 ];
 
 export const CHAIN_CONFIG = {

@@ -1,8 +1,19 @@
 const express = require('express');
 const cors = require('cors');
-const app = express();
+const cron = require('node-cron');
+require('dotenv').config();
 
+const app = express();
 const PORT = process.env.PORT || 3001;
+
+// Contract configuration
+const CONTRACT_CONFIG = {
+    zetaLendAI: "0x4Cdf2668Fec5A48aB4CaB277353d1a1B073704a3",
+    gateway: "0xfEDD7A6e3Ef1cC470fbfbF955a22D793dDC0F44E",
+    network: "zetachain_testnet",
+    chainId: 7001,
+    explorer: "https://athens.explorer.zetachain.com"
+};
 
 // Middleware
 app.use(cors({
@@ -10,17 +21,19 @@ app.use(cors({
 }));
 app.use(express.json());
 
-// Contract configuration
-const CONTRACT_CONFIG = {
-    zetaLendAI: "0x8cdcc4e2ca3d32d4bc134b6cce408add8d7a19ef",
-    gateway: "0xfEDD7A6e3Ef1cC470fbfbF955a22D793dDC0F44E",
-    network: "zetachain_testnet",
-    chainId: 7001,
-    explorer: "https://athens.explorer.zetachain.com"
-};
+// Root endpoint
+app.get('/', (req, res) => {
+    res.json({
+        message: '🚀 ZetaLend AI Backend',
+        status: 'running',
+        contract: CONTRACT_CONFIG.zetaLendAI,
+        network: CONTRACT_CONFIG.network,
+        timestamp: new Date().toISOString()
+    });
+});
 
-// Health check
-app.get('/health', (req, res) => {
+// Health check endpoints (both routes for flexibility)
+app.get(['/health', '/api/health'], (req, res) => {
     res.json({
         status: '🚀 ZetaLend AI Backend Running',
         contract: CONTRACT_CONFIG.zetaLendAI,
@@ -98,6 +111,60 @@ app.get('/api/ai/liquidation-risk/:positionId', (req, res) => {
             factors: ['Price volatility', 'Market conditions'],
             timestamp: new Date().toISOString()
         }
+    });
+});
+
+// Mock lending routes
+app.get('/api/lending/positions', (req, res) => {
+    res.json({
+        success: true,
+        data: []
+    });
+});
+
+app.post('/api/lending/create-position', (req, res) => {
+    res.json({
+        success: true,
+        message: 'Position created successfully',
+        data: {
+            positionId: Math.random().toString(36).substr(2, 9),
+            timestamp: new Date().toISOString()
+        }
+    });
+});
+
+// Mock AI monitoring endpoint for cron job
+app.post('/api/ai/monitor-positions', (req, res) => {
+    res.json({
+        success: true,
+        message: 'Risk monitoring completed',
+        timestamp: new Date().toISOString()
+    });
+});
+
+// 🤖 AI FEATURE: Automated risk monitoring
+cron.schedule('*/5 * * * *', async () => {
+    console.log('Running automated risk assessment...');
+    try {
+        // Monitor positions (mock implementation)
+        console.log('Risk monitoring completed');
+    } catch (error) {
+        console.error('Risk monitoring failed:', error);
+    }
+});
+
+// Error handling middleware
+app.use((err, req, res, next) => {
+    console.error(err.stack);
+    res.status(500).json({ error: 'Something went wrong!' });
+});
+
+// 404 handler
+app.use('*', (req, res) => {
+    res.status(404).json({
+        error: 'Endpoint not found',
+        path: req.originalUrl,
+        message: 'The requested endpoint does not exist'
     });
 });
 
