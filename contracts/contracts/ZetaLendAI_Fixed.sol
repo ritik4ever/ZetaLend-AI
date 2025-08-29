@@ -55,10 +55,10 @@ contract ZetaLendAI {
     mapping(address => uint256) public totalLiquidity;
     mapping(uint256 => uint256) public chainUtilization;
     
-    // ✅ RECEIVER CONTRACTS WITH EXPLICIT STORAGE VERIFICATION
+    //  RECEIVER CONTRACTS WITH EXPLICIT STORAGE VERIFICATION
     mapping(uint256 => address) public receiverContracts;
     
-    // ✅ STORAGE TEST VARIABLES
+    //  STORAGE TEST VARIABLES
     uint256 public storageTestValue;
     mapping(uint256 => uint256) public storageTestMapping;
     
@@ -119,14 +119,14 @@ contract ZetaLendAI {
         chainTokens[137] = 0x48f80608B672DC30DC7e3dbBd0343c5F02C738Eb;
         chainTokens[56] = 0x13A0c5930C028511Dc02665E7285134B6d11A5f4;
         
-        // ✅ INITIALIZE STORAGE TEST
+        //  INITIALIZE STORAGE TEST
         storageTestValue = 12345;
         storageTestMapping[1] = 999;
         storageTestMapping[137] = 888;
         storageTestMapping[56] = 777;
     }
     
-    // ✅ BULLETPROOF RECEIVER FUNCTIONS WITH FORCED VERIFICATION
+    //  BULLETPROOF RECEIVER FUNCTIONS WITH FORCED VERIFICATION
     function setReceiverContract(uint256 chainId, address receiver) external onlyAdmin {
         require(receiver != address(0), "Invalid receiver address");
         require(chainId == 1 || chainId == 137 || chainId == 56, "Unsupported chain");
@@ -171,7 +171,7 @@ contract ZetaLendAI {
         emit StorageTest("Batch receivers set successfully", chainIds.length);
     }
     
-    // ✅ EXPLICIT GETTER FUNCTIONS
+    //  EXPLICIT GETTER FUNCTIONS
     function getReceiverContract(uint256 chainId) external view returns (address) {
         return receiverContracts[chainId];
     }
@@ -189,7 +189,7 @@ contract ZetaLendAI {
         receivers[2] = receiverContracts[56];
     }
     
-    // ✅ STORAGE TESTING FUNCTIONS
+    //  STORAGE TESTING FUNCTIONS
     function testBasicStorage() external view returns (uint256 testValue, uint256 ethTest, uint256 polygonTest, uint256 bscTest) {
         testValue = storageTestValue;
         ethTest = storageTestMapping[1];
@@ -219,7 +219,7 @@ contract ZetaLendAI {
         emit ReceiverContractSet(chainId, receiver);
     }
     
-    // ✅ MAIN LENDING FUNCTION (unchanged)
+    //  MAIN LENDING FUNCTION (unchanged)
     function lendCrossChain(
         uint256 collateralAmount,
         uint256 borrowAmount,
@@ -525,3 +525,4 @@ contract ZetaLendAI {
     receive() external payable {}
     fallback() external payable {}
 }
+
